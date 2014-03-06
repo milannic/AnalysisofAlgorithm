@@ -1,0 +1,104 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multicol}
+\usepackage{epsfig}
+\setlength{\parindent}{0cm}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{6}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{3}
+\begin{document}
+\maketitle
+\newpage
+\section*{Problem 24-4}
+\subsection*{a.}
+
+The basic algorithm frame is based on Dijkstra's algorithm.
+
+If we have known that $\delta(s,v) \leq |E|$, we can just initialize all the vertex other than s setting the attribute d to $|E|$+1 instead of $+\infty$. 
+
+Then just like problem 2.2 in this hw6, we just use the link-list array L$[0\cdots |E|+1]$ to store all the vertex, and each vertex v with v.d = i is stored in L[i]. To simplify the proof,we just present it concisely.
+
+Because we initialize all the vertices with d to $|E|+1$, then all the vertices can be stored in the L. We implement the each link-list with a circular double link-list with sentinel then we can perform insert and delete operation at O(1) time.
+
+In the execution of algorithm, we just traverse the L from 0 to $|E|$, to take the first element in the first non-empty link-list and we never go back because relax(u,v) operation decreases v.d to the u.d at most and extract-min always take the vertex v with smallest v.d, with fact that delete operation is O(1), and the only possibility  that v in $L[0\cdots|E|]$ is that there is a path from source s to v, then we can say that the total cost of Extract-Min is $O(|E|)$.
+
+And we execute relax(u,v) for each edges at most, and in each relax, we may decrease a certain v.d and delete the vertex from original list and insert it to the new link list.  
+
+Decrease-key cost one delete operation and one insert operation, then it cost only O(1), the total cost of relax is $O(|E|)$.
+
+So far, the total cost of the algorithm is $O(|E|)$.
+
+\subsection*{b.}
+To compute $\delta_{1}(s,v)$, notice that every $w_{1}(u,v)$ is a binary bit, then $w_{1}(u,v) \in \{0,1\}$, then $\delta_{1}(s,v) \leq |V|-1 \leq |E|$.
+
+From the conclusion of section a, we know that we can compute $\delta_{1}(s,v)$ for all v $\in V$ in O(E) time.
+
+\subsection*{c.}
+1. To show that $w_{i}(u,v) = 2w_{i-1}(u,v) or 2w_{i-1}(u,v)+1$, we present $w_{i-1}(u,v)$ as a binary sequence $s_{k}\cdots s_{k-i+2}$, and $w_{i}(u,v)$ is $s_{k}\cdots s_{k-i+1} = s_{k}\cdots s_{k-i+2}s_{k-i+1} = 2(s_{k}\cdots s_{k-i+2}) + s_{k-i+1} = 2w_{i-1}(u,v)+s_{k-i+1}$. 
+
+Then if $s_{k-i+1} = 0$, $w_{i}(u,v) = 2w_{i-1}(u,v) + s_{k-i+1} = 2w_{i-1}(u,v)$, otherwise $w_{i}(u,v) = 2w_{i-1}(u,v) + s_{k-i+1} = 2w_{i-1}(u,v)+1$,
+
+2.To show that $2\delta_{i-1}(s,v) \leq \delta_{i}(s,v) \leq 2\delta_{i-1}(s,v)+|V|-1$, we notice that if all the weights in a graph are multiplied by factor c(nonnegative), correspondingly, all the shortest path $\delta(s,v)$ also are also multiplied by c. This is quite intuitive, we just do a mapping from x to cx. 
+
+And if all the weights in a graph are increased by at most c, then all the shortest path $\delta(s,v)$ increase at most by $(|V|-1)c$, for every shortest path is at most $|V|-1$ length.
+
+Then focus on our problem, from $\delta_{i-1}(s,v)$ to $\delta_{i}(s,v)$, we can regard it as two steps, firstly, all the weights are multiplied by 2, in this stage,$2\delta_{i-1}(s,v) = \delta_{i}'(s,v)$. 
+
+Then we have then all the weights are increased by at most 1, the $\delta_{i}'(s,v) \leq \delta_{i}(s,v) \leq \delta_{i}'(s,v)+|V|-1$.
+
+That is $2\delta_{i-1}(s,v) \leq \delta_{i}(s,v) \leq 2\delta_{i-1}(s,v)+|V|-1$.
+\subsection*{d.}
+\begin{eqnarray*}
+  \begin{split}
+	\hat{w_{i}(u,v)} =& w_{i}(u,v) + 2\delta_{i-1}(s,u) - 2\delta_{i-1}(s,v) \\
+	\geq & 2w_{i-1}(u,v) + 2\delta_{i-1}(s,u) - 2\delta_{i-1}(s,v) \text{   \{from section c\}} \\
+	\geq& 0 \text{   \{triangle inequality from lemma 24.10\}} \\
+  \end{split}
+  \label{equ:c1}
+\end{eqnarray*}
+
+\subsection*{e.}
+From lemma 25.1 in the textbook, we see that rewriting won't change the shortest path itself other than the weight, and $\delta_{i-1}(s,v)$ can be regarded as a function mapping vertex $v$ to a real number, then we set u to s, and get:
+\begin{eqnarray*}
+  \begin{split}
+	\hat{w_{i}(u,v)} =& w_{i}(u,v) + 2\delta_{i-1}(s,u) - 2\delta_{i-1}(s,v) \\
+	&\text{after the transformation} \\
+	\hat{\delta_{i}(s,v)} =& \delta_{i}(s,v) + 2\delta_{i-1}(s,s) - 2\delta_{i-1}(s,v) \\
+	\hat{\delta_{i}(s,v)} =& \delta_{i}(s,v)  - 2\delta_{i-1}(s,v) \\
+	\delta_{i}(s,v) =& \hat{\delta_{i}(s,v)}  + 2\delta_{i-1}(s,v) \\
+  \end{split}
+  \label{equ:e1}
+\end{eqnarray*}
+And from section c, we have $2\delta_{i-1}(s,v) \leq \delta_{i}(s,v) \leq 2\delta_{i-1}(s,v)+|V|-1$ \\
+Then $\hat{\delta_{i}(s,v)}  + 2\delta_{i-1}(s,v) \leq 2\delta_{i-1}(s,v)+|V|-1$ \\
+Then $\hat{\delta_{i}(s,v)} \leq |V|-1 \leq |E|$
+
+
+
+\subsection*{f.}
+To compute $\delta_{i}(s,v)$ from $\delta_{i-1}(s,v)$ for all v $\in V$ in O(E) time. \\
+
+Firstly, from section d, we should calculate every $\hat{w_{i}(u,v)}$ for each edge in G, and every calculation cost O(1), the total cost is $O(|E|)$. 
+
+Secondly, we calculate the single-source shortest paths $\hat{\delta_{i}(s,v)}$ based on $\hat{w_{i}(u,v)}$, for that $\hat{\delta_{i}(s,v)} \leq |E|$, we can finish this step in $O(|E|)$ time by the method in section a.
+
+At last we use $\delta_{i}(s,v) = \hat{\delta_{i}(s,v)}  + 2\delta_{i-1}(s,v)$ to get all the $\delta_{i}(s,v)$, this step cost O(V), notice that from Dijkstra's algorithm, we can only get to those vertices reachable to the source s.
+
+Then the total step in above 3 steps are $O(|E|)$.
+
+To conclude, when i = 1, we just use the method in section a to calculate all the $\delta_{1}(s,v)$.
+
+From i = $2\ldots k $, we use the method above with in the section f to update $\delta_{i}(s,v)$.
+
+Each iteration cost $O(|E|)$, and the total iterations times is O(k) = O(lgW), then the total cost of the algorithm is $O(|E|lgW)$.
+
+\end{document}

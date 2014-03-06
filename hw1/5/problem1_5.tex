@@ -1,0 +1,246 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{1}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{5}
+\begin{document}
+\maketitle
+\newpage
+\section{Sort the function array}
+\noindent The fcuntion array is ($n^2$, $n^{0.01}$, $2^n$ ,$3^{n/2}$ ,$2^{\lg \lg n}$ ,$\lg ^4 n$ ,$4^{\lg n}$ ,$16n-5 \lg n$ ,$(\lg n)^{\lg n / \lg \lg n}$ )
+\\ Then we sort them by order of growth, the new array will be:$$(2^{\lg \lg n},\lg ^4 n,n^{0.01},16n-5 \lg n,(\lg n)^{\lg n / \lg \lg n} ,n^2,4^{\lg n},3^{n/2},2^n)$$
+\\ Next we will prove the correctness of each pair:
+\subsection*{1. ~$(2^{\lg \lg n},\lg ^4 n)$}
+Let $f(n)$ denotes $2^{\lg \lg n}$ and $g(n)$ denotes $\lg ^4 n$, notice that $f(n)=2^{\lg \lg n}= \lg n$
+\subsubsection* {O:}
+Assume that $f(n) = O(g(n))$\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+f(n) &= O(g(n)) \\
+\lg n & \leq c_{0}(\lg ^4 n)  ~ ~(2\leq n)\\
+1 & \leq c_{0}(\lg ^3 n) \\
+1 / (\lg ^3 n)  & \leq c_{0} \\
+\end{aligned}
+\end{equation}
+If we take $c_{0} \geq 1$, then we can get :
+$$f(n) = O(g(n))$$
+\rule{3mm}{3mm}
+\subsubsection* {$\Omega$:}
+Assume that $f(n) = \Omega (g(n))$\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+f(n) &= \Omega(g(n)) \\
+\lg n & \geq c_{1}(\lg ^4 n)  ~ ~(2\leq n)\\
+1 & \geq c_{1}(\lg ^3 n) \\
+1 / (\lg ^3 n)  & \geq c_{1} \\
+\end{aligned}
+\end{equation}
+Becasue $\lim\limits_{n\to\infty}{1 / (\lg ^3 n)}  = 0$, then we cannot take a such $c_{1} > 0$.\\
+\rule{3mm}{3mm}
+
+\subsubsection* {Conclusion:}
+$$2^{\lg \lg n}= O(\lg ^4 n)$$
+
+\subsection*{2. ~$(\lg ^4 n,n^{0.01})$}
+Let $f(n)$ denotes $\lg ^4 n$ and $g(n)$ denotes $ n^{0.01} $
+\subsubsection* {O:}
+Assume that $f(n) = O(g(n))$\\
+Based on L'Hospital Rule, we can get the $\lim\limits_{n\to\infty}{n^{0.01} / (\lg ^4 n)}  = \infty$.
+\\Then there must be a $n_{0}$, when $n \geq n_{0} , f(n) \leq g(n) $, then we can take $c_{0} \geq 1$.
+\\ Therefore $f(n) = O(g(n))$ 
+\\ \rule{3mm}{3mm}
+
+\subsubsection* {$\Omega$:}
+Assume that $f(n) = \Omega (g(n))$\\
+Based on L'Hospital Rule, we can get the $\lim\limits_{n\to\infty}{n^{0.01} / (\lg ^4 n)}  = \infty$.
+\\Then there won't be a pair of constant $c_{1}$ and $n_{0}$, when $n \geq n_{0} , f(n) \geq c_{1}g(n) $.
+\\ \rule{3mm}{3mm}
+
+\subsubsection* {Conclusion:}
+$$2^{\lg ^4 n}= O(n^{0.01})$$
+
+
+\subsection*{3. ~$(n^{0.01},16n-5 \lg n)$}
+Let $f(n)$ denotes $n^{0.01}$ and $g(n)$ denotes $16n-5 \lg n$
+\subsubsection* {O:}
+Assume that $f(n) = O(g(n))$\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+f(n) &= O(g(n)) \\
+n^{0.01} & \leq c_{0}(16n-5 \lg n)  ~ ~(0\leq n)\\
+1 & \leq c_{0}(16n^{0.99}-5\lg n / n^{0.01}) \\
+\end{aligned}
+\end{equation}
+Based on L'Hospital Rule, we can get the $\lim\limits_{n\to\infty}{n^{0.01} / (\lg ^4 n)}  = \infty $.
+\\Then there must be a $n_{0}$, when $n \geq n_{0} , 5\lg n /n^{0.01} = \epsilon $, then we can take $c_{0} \geq \frac{1}{16n^{0.99}+\epsilon}$.
+\\ Therefore $f(n) = O(g(n))$ 
+\\ \rule{3mm}{3mm}
+
+\subsubsection* {$\Omega$:}
+Assume that $f(n) = \Omega (g(n))$\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+f(n) &= \Omega(g(n)) \\
+n^{0.01} & \geq c_{1}(16n-5 \lg n)  ~ ~(0\leq n)\\
+1 & \geq c_{1}(16n^{0.99}-5\lg n / n^{0.01}) \\
+\end{aligned}
+\end{equation}
+Based on L'Hospital Rule, we can get the $\lim\limits_{n\to\infty}{n^{0.01} / (\lg ^4 n)}  = \infty$.\\
+Then $$\lim\limits_{n\to\infty}{(1 / 16n^{0.99}-5\lg n / n^{0.01})}  = \infty$$
+\\Then there won't be a pair of constant $c_{1}$ and $n_{0}$, when $n \geq n_{0} , f(n) \geq c_{1}g(n) $.
+\\ \rule{3mm}{3mm}
+
+\subsubsection* {Conclusion:}
+$$n^{0.01} = O(16n-5 \lg n)$$
+
+\subsection*{4. ~$(16n-5 \lg n,(\lg n)^{\lg n / \lg \lg n})$}
+Let $f(n)$ denotes $16n-5 \lg n$ and $g(n)$ denotes $(\lg n)^{\lg n / \lg \lg n}$ and notice that $(\lg n)^{\lg n / \lg \lg n} = n$
+\subsubsection* {O:}
+Assume that $f(n) = O(g(n))$\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+f(n) &= O(g(n)) \\
+16n-5 \lg n & \leq c_{0}n  
+\end{aligned}
+\end{equation}
+\\ Just take any $ c_{0} \geq 16 $~and~$n\geq 1$, we will get $f(n) = O(g(n))$ 
+\\ \rule{3mm}{3mm}
+
+\subsubsection* {$\Omega$:}
+Assume that $f(n) = \Omega (g(n))$\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+f(n) &= \Omega(g(n)) \\
+16n-5 \lg n & \geq c_{1}n  
+(16-c_{1})n \geq 5 \ln n
+\end{aligned}
+\end{equation}
+Based on L'Hospital Rule, we can get the $\lim\limits_{n\to\infty} n / \lg  n  = \infty$.\\
+\\ Just take any $ c_{1} \leq 16 $~and we will find a big enough $n_{0}$, we will get $f(n) = \Omega(g(n))$ 
+\\ \rule{3mm}{3mm}
+
+\subsubsection* {Conclusion:}
+$$16n-5 \lg n = \Theta((\lg n)^{\lg n / \lg \lg n})$$
+
+\subsection*{5. ~$((\lg n)^{\lg n / \lg \lg n},n^2)$}
+Let $f(n)$ denotes $(\lg n)^{\lg n / \lg \lg n}$ and $g(n)$ denotes $n^2$ and notice that $(\lg n)^{\lg n / \lg \lg n} = n$
+\subsubsection* {O:}
+Assume that $f(n) = O(g(n))$\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+f(n) &= O(g(n)) \\
+n  & \leq c_{0}n^2  
+1  & \leq c_{0}n 
+\end{aligned}
+\end{equation}
+\\ Just take any $ c_{0} \geq 1 $~and~$n\geq 1$, we will get $f(n) = O(g(n))$ 
+\\ \rule{3mm}{3mm}
+
+\subsubsection* {$\Omega$:}
+Assume that $f(n) = \Omega (g(n))$\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+f(n) &= \Omega(g(n)) \\
+n & \geq c_{1}n^2  
+1 & \geq c_{1}n  
+1/n \geq c_{1}
+\end{aligned}
+\end{equation}
+Because $\lim\limits_{n\to\infty} 1/n  = 0$.\\
+\\Then there won't be a pair of constant $c_{1}$ and $n_{0}$, when $n \geq n_{0} , f(n) \geq c_{1}g(n) $.
+\\ \rule{3mm}{3mm}
+
+\subsubsection* {Conclusion:}
+$$(\lg n)^{\lg n / \lg \lg n} = \Theta(n^2)$$
+
+
+\subsection*{6. ~$(n^2,4^{\lg n})$}
+Let $f(n)$ denotes $n^2$ and $g(n)$ denotes $4^{\lg n}$ and notice that $g(n) = 4^{\lg n} = n^2 = f(n)$
+Therefore $n^2 = \Theta (4^{\lg n})$
+
+\subsection*{7. ~$(4^{\lg n},3^{n/2})$}
+Let $f(n)$ denotes $4^{\lg n}$ and $g(n)$ denotes $3^{n/2}$ and notice that $4^{\lg n} = n^2$ and $3^{n/2} = \sqrt{3}^n$
+\subsubsection* {O:}
+Assume that $f(n) = O(g(n))$\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+f(n) &= O(g(n)) \\
+n^2  & \leq c_{0}\sqrt{3}^n \\
+n^2 / \sqrt{3}^n & \leq c_{0} \\
+\end{aligned}
+\end{equation}
+Based on L'Hospital Rule, we can get the $\lim\limits_{n\to\infty}{n^2 / \sqrt{3}^n}  = 0$.\\
+\\ Just take any $ c_{0} \geq 1 $~and~$n_{0}\geq 4$, we will get $f(n) = O(g(n))$ 
+\\ \rule{3mm}{3mm}
+
+\subsubsection* {$\Omega$:}
+Assume that $f(n) = \Omega (g(n))$\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+f(n) &= \Omega(g(n)) \\
+n^2  & \geq c_{0}\sqrt{3}^n \\
+n^2 / \sqrt{3}^n & \geq c_{0} \\
+\end{aligned}
+\end{equation}
+Based on L'Hospital Rule, we can get the $\lim\limits_{n\to\infty}{n^2 / \sqrt{3}^n}  = 0$.\\
+\\Then there won't be a pair of constant $c_{1}$ and $n_{0}$, when $n \geq n_{0} , f(n) \geq c_{1}g(n) $.
+\\ \rule{3mm}{3mm}
+
+\subsubsection* {Conclusion:}
+$$4^{\lg n} = O(3^{n/2})$$
+
+\subsection*{8. ~$(3^{n/2},2^n)$}
+Let $f(n)$ denotes $3^{n/2}$ and $g(n)$ denotes $2^n$ and notice that $3^{n/2} = \sqrt{3}^n$
+\subsubsection* {O:}
+Assume that $f(n) = O(g(n))$\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+f(n) &= O(g(n)) \\
+\sqrt{3}^n & \leq c_{0}2^n\\
+\sqrt{3}^n / 2^n & \leq c_{0} \\
+(\sqrt{3} / 2)^n & \leq c_{0} \\
+\end{aligned}
+\end{equation}
+Because $\lim\limits_{n\to\infty}{(\sqrt{3}\ 2)^n}  = 0$
+\\ Just take any $ c_{0} \geq 1 $~and~$n_{0}\geq 0$, we will get $f(n) = O(g(n))$ 
+\\ \rule{3mm}{3mm}
+
+\subsubsection* {$\Omega$:}
+Assume that $f(n) = \Omega (g(n))$\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+f(n) &= \Omega(g(n)) \\
+\sqrt{3}^n & \geq c_{0}2^n\\
+\sqrt{3}^n / 2^n & \geq c_{0} \\
+(\sqrt{3} / 2)^n & \geq c_{0} \\
+\end{aligned}
+\end{equation}
+Because $\lim\limits_{n\to\infty}{(\sqrt{3}\ 2)^n}  = 0$
+\\Then there won't be a pair of constant $c_{1}$ and $n_{0}$, when $n \geq n_{0} , f(n) \geq c_{1}g(n) $.
+\\ \rule{3mm}{3mm}
+
+\subsubsection* {Conclusion:}
+$$3^{n/2} = O(2^n)$$
+\end{document}

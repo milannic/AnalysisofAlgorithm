@@ -1,0 +1,89 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{subfigure}
+\usepackage{epsfig}
+\setlength{\parindent}{0cm}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{6}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{5}
+\begin{document}
+\maketitle
+\newpage
+\section {Problem 26.1-2} 
+
+A flow network with multiple sources and multiple sinks G is a directed graph in which each edge $(u,v) \in E$ has a nonnegative capacity $c(u,v) \geq 0$, and if E contains an edge $(u,v)$, then there is no edge $(v,u)$ in the reverse direction. \\
+Then we define S be the vertex set called source set of the network, and T be the vertex set called sink set of the network,both S and T are non-empty. 
+
+Other than vertices in S, all the vertices should have at least one entering edge, and for convenience, we assume that for each vertex $v \in V-S-T$, there is at least one pair $(s,t)(s \in S, t \in T)$, there exists at least one path from $s$ through $v$ to $t$.\\
+
+Let G = (V,E) be a flow network with a capacity function c. \\
+
+A flow in G is a real-valued function $f : V \times V \rightarrow \Re$ that satisfies the following two properties:
+
+Capacity constraint : For all $u,v \in V$, we require $0\leq f(u,v) \leq c(u,v)$.
+
+Flow conservation: For all $u \in V - S - T$, we require
+$$\sum\limits_{v \in V}f(v,u) =\sum\limits_{v \in V}f(u,v) $$
+When $(u,v) \notin E$, there can be no flow from $u$ to $v$, and $f(u,v) = 0$.
+
+We call the nonnegative quantity $f(u,v)$ the flow from vertex $u$ to vertex $v$. The value $|f|$ of a flow $f$ is defined as :
+$$ |f| = \sum_{s \in S}\sum_{v \in V}f(s,v) - \sum_{s \in S}\sum_{v \in V}f(v,s) $$
+
+Then we show that any flow in a multiple-source, multiple-sink flow network corresponds to a flow of identical value in the single-source,single-sink network obtained by adding a super source (ss)and a super sink(st), and vice versa. \\
+$\Rightarrow$ \\
+for the original multiple-source,multiple-sink flow network, we have\\ $$ |f| = \sum_{s \in S}\sum_{v \in V}f(s,v) - \sum_{s \in S}\sum_{v \in V}f(v,s) $$ 
+After the transformation, all the vertices in S have became normal vertex, and there is one (ss,s) for every s in S added to the graph.
+
+According to flow conservation: for every $s \in S$, it should have:
+$$ f(ss,s) -  \sum_{v \in V}f(s,v) - \sum_{v \in V}f(v,s) = 0$$
+For the super source, the capacity is just $\infty$, then this value must be compatible.
+
+And the  single-source,single-sink network's flow value is defined as : 
+$$ |f|' = \sum_{v \in V}f(ss,v) - \sum_{v \in V}f(v,ss) = \sum_{s \in S}f(ss,s) - \sum_{s \in S}f(s,ss) $$
+That is:
+$$ |f|' = \sum_{s \in S}(\sum_{v \in V}f(s,v) - \sum_{v \in V}f(v,s)) = \sum_{s \in S}\sum_{v \in V}f(s,v) - \sum_{s \in S}\sum_{v \in V}f(v,s)  $$
+
+$\Leftarrow$ \\
+On the contrary, 
+$$ |f|' = \sum_{v \in V}f(ss,v) - \sum_{v \in V}f(v,ss) $$
+And for each edge $(ss,s)$, we just remove it and add $s$ to the S.
+Recall the flow conservation:
+$$ f(ss,s) + \sum_{v \in V-ss}f(v,u) = \sum_{v \in V}f(u,v)$$
+After the deletion of the edge, we have:
+$$\sum_{v \in V}f(u,v) - \sum_{v \in V-ss}f(v,u) =f(ss,s) $$
+
+Then we sum up all the vertices in S, which is the flow value of multiple-source, multiple-sink network, then we have:
+$$ |f| = \sum_{s \in S}\sum_{v \in V}f(s,v) - \sum_{s \in S}\sum_{v \in V}f(v,s) $$
+$$ |f| = \sum_{s \in S}(\sum_{v \in V}f(s,v) - \sum_{v \in V}f(v,s)) $$
+$$ |f| = \sum_{s \in S}(f(ss,s)) $$
+By the super source property, we can add those terms equal to 0, then we have:
+$$ |f| = \sum_{v \in V}f(ss,v)- \sum_{v \in V}f(v,ss) $$
+
+\section {Problem 26.2-10} 
+Firstly we just find out the maximum flow of the given network G = (V,E). 
+
+Next we just go back, reduce the flow to 0. We do this in the following way. 
+
+Firstly we scan the whole network, to find the edge$(u,v)$ has the minimal non-zero $f(u,v)$, then we just find a flow path $s \rightarrow \cdots \rightarrow u \rightarrow v \rightarrow \cdots \rightarrow t$, along the path, each edge $(u',v')$we just reduce  $ f'(u',v') = f(u',v')-f(u,v)$. Notice that we just find the minimal non-zero $f(u,v)$, and we won't break the property of the flow. 
+
+Then we repeat above step until we get the flow to 0.
+
+And because in each iteration, we've reduced the minimal non-zero $f(u,v)$ to 0, combining with the fact that we just perform decreasing, we will know that this edge won't be operated again.
+
+Because $f(u,v) = 0$, $(u,v)$ will never occur in the latter flow path again, and it will never be selected as well. 
+For there is $|E|$ edges, we can repeat above step at most $|E|$ times.
+
+At last, the path by which each time we reduce the flow can be regarded as a augment path reversely if we start to find the maximum flow, then we just re-increase the flow just as the way we decrease it, so we could get to our max flow with at most $|E|$ augmentations, the sequence is just the reverse order when we decrease it.
+
+\end{document}

@@ -1,0 +1,46 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{1}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{3}
+\begin{document}
+\maketitle
+\newpage
+\section{Exercises 3.2-1}
+\subsection {$f(n)+g(n)$}
+let $n_{1},n_{2}$ be any real number and $n_{1}\leq n_{2}$, because both $f(n),g(n)$ are monotonically increasing functions, we have$$f(n_{1})\leq f(n_{2})$$ $$g(n_{1})\leq g(n_{2})$$
+Then we have $$f(n_{1})+g(n_{1})\leq f(n_{2})+g(n_{2})$$
+That is $f(n)+g(n)$ is also monotonically increasing functions.
+\subsection {$f(g(n))$}
+let $n_{1},n_{2}$ be any real number and $n_{1}\leq n_{2}$, because both $f(n),g(n)$ are monotonically increasing functions, we have$$f(n_{1})\leq f(n_{2})$$ $$g(n_{1})\leq g(n_{2})$$
+Then we have $$g(n_{1})\leq g(n_{2})$$
+let $n_{3},n_{4}$ be the same value as $g(n_{1}),g(n_{2})$,
+Then we have $$f(n_{3})\leq f(n_{4})$$
+That is $$f(g(n_{1}))\leq f(g(n_{2}))$$
+Therefore $f(g(n))$ is also monotonically increasing functions.
+\subsection {$f(n)\cdot g(n)$}
+let $n_{1},n_{2}$ be any real number and $n_{1}\leq n_{2}$, because both $f(n),g(n)$ are monotonically increasing functions, we have$$f(n_{1})\leq f(n_{2}) \eqno(1)$$ $$g(n_{1})\leq g(n_{2}) \eqno(2)$$
+because both $f(n),g(n)$ are nonnegative functions,then we let $(1)\times (2)$ can get $$f(n_{1})g(n_{1}) \leq f(n_{2})g(n_{2}) \eqno(3)$$
+Then $f(n)\cdot g(n)$ is also monotonically increasing functions.
+\newpage
+\section{Excercises 3.2-8}
+Because $k\ln k = \Theta(n)$, there exsit a pair of $c_{0}$ and $k_{0}$ to make when $k \geq k_{0}$ there will be $$ k\ln k \leq c_{0}k \eqno(4)$$
+Now we take big enough $k_{1}$ to make $\ln k_{1} > 0 $ and $k_{1} \geq k_{0}$, then $c_{0}$ and $k_{1}$ is also such a pair of real number to meet above demand.
+For those $k \geq k_{1} $, we also have (4), because those $\ln k > 0$, we can transfer the formula to: $$k \leq c_{0} \frac{k}{\ln k}$$
+Therefore $$ k = O(n/ \ln n)$$
+It is easy to see that we can prove that $ k = \Omega(n/ \ln n)$ in the same way.
+Then $$ k = \Theta(n/ \ln n)$$ 
+That is $k\ln k = \Theta(n) \Rightarrow  k = \Theta(n/ \ln n)$
+
+
+\end{document}

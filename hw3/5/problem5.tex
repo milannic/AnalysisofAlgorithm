@@ -1,0 +1,131 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{epsfig}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{3}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{5}
+\begin{document}
+\maketitle
+\newpage
+\section {Problem 15-4} 
+At first we prove that the problem has optimal sub-structure. 
+\\It is a bit different from normal case of optimal sub-structure, we define C(n) as the original printing neatly problem, and C'(n) as the problem that given n words, to minimize the total cube of end space of \textbf{all} lines.
+\\Apparently, if we have choosen $w[i \cdots n]$ to be in the last line, the our problem's optimum is the same as C'(i-1).\\
+Then we prove that if $C_{optimum}(n) = C'(i-1)$, then $C'(i-1) = C'_{optimum}(i-1)$.\\
+The proof is easy to give. We assume that if $C'(i-1) > C'_{optimum}(i-1)$, then we just replace the arrangement of those i-1 words as $C'_{optimum}(i-1)$. \\
+Because our new $C_{new}(n) = C'_{optimum}(i-1) < C'(i-1) = C_{optimum}(n) $, then our $C_{optimum}(n)$ won't be the best solution, which conflicts with our assumption. \\
+Thus we transfer the C to C'. \\
+Given a certain M and the constraint that we must place the words sequentially,then possible arrangement in the last line is limited and it is linear to the total number of words.\\Then we just choose the minimum from all this possible arrangements.\\ 
+\textbf{Next we must also prove that C'(n) has optimal sub-structure.} 
+If the optimum sequence of problem C'(n) is $C'_{optimum}(n)$, and the last line contains $w[i \cdots n]$, we exclude this line, the rest lines are also the $C'_{optimum}(i-1)$.
+\\The answer is easy to know. Same as the notation before, we just choose $w[i \cdots n]$ in the last line of C'(n) problem, and C'(i-1) must be optimum. If not, for a $C'_{optimum}(n)$, we change the arrangement of $w[1 \cdots i-1]$ to get the $C_{optimum}(i-1)$, because the last line isn't change, then the additional cost won't change, so $C'_{new}(n) < C'_{optimum}(n)$.\\
+Thus we just do some modification to change our original problem to C'(n), we can find a dynamic programming algorithm, we use bottom up algorithm for those $k<n$, we just find $C'_{optimum}(k)$, and for $k=n$, we find $C_{optimum}(k)$. 
+
+\begin{text}
+  \noindent To implement this function, we define cost(i,j) as the total cost of if we place $w_{i}$ to $w_{j}$ within a line:
+\end{text}
+\begin{equation}
+cost(i,j) = \left\{
+             \begin{array}{lcl}
+			   {0} &\text{if}& j=n \&\& w[i \cdots j]\text{can be within one line} \\
+			   {M-j+i-\sum_{k=i}^{j}l_{k}} &\text{if}& j\neq n \&\& w[i \cdots j]\text{can be within one line} \\
+			   {\infty} &\text{otherwise} 
+             \end{array}  
+        \right.
+\end {equation}
+Then we give the pseudo-code of the algorithm. cost(i,j) is just as the definition above, we won't re-write in the psedo-code.
+\\ As you can see from the pseudo-code, the dominant consumption is in Algorithm \ref{algo:dp}, there is two nested loop with the length of n, and each iteration consumes constant time, thus the time complexity is $\Theta(n^{2})$, and for we have a cost table, the space complexity is also $\Theta(n^{2})$.
+
+\begin{algorithm}[h]
+  \caption{Printing-Neatly-FINDSOLUTION}
+  \label{algo:dp}
+  \begin{algorithmic}[1]
+	\REQUIRE W,L,M,n
+	\ENSURE ~ ~\\ 
+	\FOR { $j = 1$ to $n-1$} 
+	  \STATE{$cost(j,j) = M - L[j]$ }
+	\ENDFOR
+	\FOR { $j = 2$ to $n-1$} 
+	  \FOR {$i=j-1$ to $1$}
+		\IF {$L[i]+1 + cost(i+1,j) \leq  M $}
+		  \STATE{$cost(i,j) = L[i]+1 + cost(i+1,j)$ }
+		\ELSE
+		  \STATE{$cost(i,j) = \infty$ }
+		\ENDIF
+	  \ENDFOR
+	\ENDFOR
+	\STATE{$cost(n,n) = 0$ }
+	\FOR { $j = n-1$ to $1$} 
+	  \IF {$cost(j,n-1) +1 +L[n] \leq  M $}
+		\STATE{$cost(j,n) = 0$ }
+	  \ELSE
+		\STATE{$cost(j,n) = \infty$ }
+	  \ENDIF
+	\ENDFOR
+	\STATE {let $R[1 \cdots n]$ and $C[1 \cdots n]$ be a new array }
+	\STATE {$R[0] =0 $}
+	\STATE {$C[0] =0 $}
+	\FOR { j = 1 to n} 
+	  \STATE {$R[j] = \infty$ }
+	  \STATE {$C[j] = \infty$ }
+	  \FOR {$i=1$ to $j$}
+		\STATE{ $temp = R[i-1]+\textbf{cost}(i,j)^{3}$}
+		\IF{ $temp < R[j]$ }
+		  \STATE {$R[j] = temp$}
+		  \STATE {$C[j] = i-1 $}
+		\ENDIF
+	  \ENDFOR
+	\ENDFOR
+	\LASTCON C,R[n]
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+  \caption{PrintingWords}
+  \label{algo:print}
+  \begin{algorithmic}[1]
+	\REQUIRE W,C,n
+	\ENSURE ~ ~\\ 
+	\STATE{$count = 2$}
+	\STATE{$pos = c[n] $}
+	\STATE{$p[1] = n $}
+	\STATE{$p[2] = c[n] $}
+	\WHILE{$pos \neq 0$} 
+	  \STATE{$count = count+1$}
+	  \STATE{$pos = c[pos] $}
+	  \STATE{$p[count]= c[pos] $}
+	\ENDWHILE
+	\STATE{$pos = 1 $}
+	\FOR { j = count to 2} 
+	  \FOR {$i=p[j]+1$ to $p[j-1]$}
+		\STATE{PRINT $w[i]$}
+	  \ENDFOR
+	\ENDFOR
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Printing-Neatly}
+	\label{algo:start}
+	\begin{algorithmic}[1]
+	  \REQUIRE W,L,M,n
+	  \ENSURE ~ ~\\ 
+	  \STATE {[C,r] = Printing-Neatly-FINDSOLUTION(W,L,M,n)}
+	  \STATE {PrintingWords(W,C,n)}
+	  \LASTCON r
+	\end{algorithmic}
+  \end{algorithm}
+
+
+
+\end{document}

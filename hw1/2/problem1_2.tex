@@ -1,0 +1,100 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{1}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{2}
+\begin{document}
+\maketitle
+\newpage
+\section{problem 2-4 Inversions}
+\subsection*{a.}
+	$(3,1),(3,1),(8,6),(8,1),(6,1)$ are the five inversions of the array $<2,3,8,6,1>$.
+\subsection*{b.}
+The array ${<n,n-1,\cdots\,2,1>}$ has the most inversions. in this array(let's assume the index starts from 1), element in the  \emph{i} th 
+$(0\leq i\leq n)$ position will have $n-i$ inversions.\\Therefore the total inversions in this array can be calculated by the formula: 
+$$(n-1)+(n-2)+\cdots+2+1=\frac{(n-1)n}{2}$$
+\subsection*{c.}
+	The running time of insertion sort is decided by the numbers of inversions of the unsorted array, that is the fact that the Inversions is the $n^2$ term in the $\Theta(n^2)$ which is the worse-case running time of the insertion sorts.\\
+	Then we'll justfy this answer.\\
+	At first, $Inver_{j}$(denoting the amounts of inversions of the element with index~$j$) is only decided by the elements before $j$.That is, no matter what the actual sequence of $A[1],A[2],\cdots A[j-1]$ is, $Inver_{j}$ won't change. \\
+	In every loop of inversion sorts, the current element denoting $A_{j}$ must be inserted into the previous sorted array $A[1\cdots j-1]$. Notice that to insert $A_{j}$ into the proper position and previous array is already sorted Therefore those elements contributing to $Inver_{j}$ now is neighbor.\\ Now we can say that the times of comparation of $A_{j}$ is the  $Inver_{j}$.\\
+From previous section we'll know that the $n^2$ term in the $\Theta(n^2)$ is made up by the total compartion times when inserting, and that is equal to the total amount of Inversions.
+\subsection*{d.}
+From textbook we know that the worse-case time of merge sort is $\Theta(n\lg{n})$, the algorithm to determine the number of inversions in any array can be designed by modifying the merge process.   
+\\
+\textbf{Merge sort:} $T(n) = 2T(\frac{n}{2})+c_{0}n$ ($c_{0}$ is a constant). 
+\\
+\textbf{$c_{0}n$ is determined by the merge process.}
+\\By master theorem, we know as long as $f(n)$ remains linear function of $n$, the total running time of the algorithm will remain $\Theta(n\lg{n})$.
+\\Notice that $Inver_{j}$(symbols remain the same as previous section) is only decided by the previous subarray and this fact lay the foundation of our new algorithm.
+\newpage
+  \begin{algorithm}[htb,!tp]
+  \caption{Inversions-Found}
+  \label{algo:inver}
+  \begin{algorithmic}[1]
+	\REQUIRE A,p,r
+	\ENSURE ~ ~\\ 
+	  \STATE $sum=0$
+	  \IF {$p<r$}
+	  \STATE{$q=\lfloor (p+r)/2 \rfloor$}
+	  \STATE{$sum+=$~Inversions-Found$(A,p,q)$}
+	  \STATE{$sum+=$~Inversions-Found$(A,q+1,r)$}
+	  \STATE{$sum+=$~Inversions-Merge$(A,p,q,r)$}
+	  \ENDIF
+	\LASTCON $sum$	
+  \end{algorithmic}
+  \end{algorithm}
+
+  \begin{algorithm}[htb,!tp]
+  \caption{Inversions-Merge}
+  \label{algo:invermerge}
+  \begin{algorithmic}[1]
+	\REQUIRE A,p,q,r
+	\ENSURE ~ ~\\ 
+	  \STATE {$sum=0$}
+	  \STATE {$n_{1}=q-p+1$}
+	  \STATE {$n_{2}=r-q$}
+	  \STATE {let $L[1\ldots n_{1}+1]$ and $R[1 \ldots n_{2}+1]$ be new arrays}
+	  \FOR {$i=1$ \textbf{to} $n_{1}$ }
+	  \STATE {$L[i]=A[p+i-1]$}
+	  \ENDFOR
+	  \FOR {$j=1$ \textbf{to} $n_{2}$ }
+	  \STATE {$R[i]=A[q+j]$}
+	  \ENDFOR
+	  \STATE {$L[n_{1}+1]=\infty $}
+	  \STATE {$R[n_{2}+1]=\infty $}
+	  \STATE {$i=1$}
+	  \STATE {$j=1$}
+	  \FOR {$k=p$ \textbf{to} $r$ }
+	  \IF {$L[i] \leq R[j]$ }
+	  \STATE {$A[k]=L[i]$}
+	  \STATE{$i=i+1$}
+	  \STATE{$sum+=j-1$}
+	  \ELSE 
+	  \STATE {$A[k]=R[j]$}
+	  \STATE{$j=j+1$}
+	  \ENDIF
+	  \ENDFOR
+	\LASTCON $sum$	
+  \end{algorithmic}
+  \end{algorithm}
+  \newpage
+	Then we prove the correctness of the algorithm.\\
+	1.As you can see from the above algorithm Inversions-Merge, we just insert one instruction(\emph{line 19}) into the loop and during every layer of the recursion tree, the execution times of this instruction won't exceed n. Then $f(n)$ remains linear function of $n$, the total running time of the algorithm will remain $\Theta(n\lg{n})$.\\
+	2. Then we prove for every subarray, Inversions-Found algorithm will sum the inversions of all the elements into the variable sum and when two subarraies execute Inversions-Merge function and combine a new subarray, the \textbf{inter-inversions}(the inversions between two subarraies) will be also added to the sum as the return value of the new Inversions-Found function.\\
+	\indent a. when the number of elements of a certain subarray(denoting $A[2k+1]$) is only one, and the Inversions-Found Function will return 0, the answer is correct. Then $A[2k+1]$ will combines with $A[2k+2]$, since all the elements are only two, then if $A[2k+1]>A[2k+2]$, the Inversions-Merge function will give 1,else 0; this number plus 0 and plus 0 will equal to 1 or 0,and this is also the right answer.\\
+	\indent b. Let's assume for subarray with $2^i$ elements, the whole function runs correct, and we will prove that the process of combining new subarray with $2^{i+1}$ elements will also give the right answer. \\ 
+	\indent The sum is made up by three part,namely,the total inversions from leftside subarray,the total inversions from rightside subarray and the \textbf{inter-inversions} between this two subarray. From our hypothesis, the first two parts are right. Then we only need to prove that the correctness of the Inversions-Merge function. Notice that these two subarraies are both sorted for we don't change the original sort function. Then we only need to prove that if the element is inserted to the new subarray, it means there won't be any element less than it in the rightside subarray and the number of \textbf{inter-inversions} of it is the index minus 1. And from the property of the Inversion, we know that we only need to condiser \textbf{inter-inversions} of the leftside elements.\\
+	\indent We take another assume that if a element(denotes $l[i]$) of leftside subarray is being inserting into the new subarray and there is still element less than it in the rightside subarray, then the new subarray won't be sorted. Then the hypothesis is false. Therefore when $l[i]$ is being inserted to the new subarray, all the elements less than it in the rightside subarray have been inserted  to the new subarray, and the number of these elements are just the \textbf{inter-inversions} of $l[i]$. This number can be get by the index of rightside subarray minus 1.\\
+	Then we have finished the whole induction.
+\end{document}

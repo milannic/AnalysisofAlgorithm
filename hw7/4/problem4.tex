@@ -1,0 +1,53 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\setlength{\parindent}{0cm}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{7}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{4}
+\begin{document}
+\maketitle
+\newpage
+\section{Exercise 34.5-7}
+At first we need to give a decision problem related to the Longest-Simple-Circle.\\ The formal language is \\
+\begin{eqnarray*}
+  \begin{split}
+LSC = \{ <G,k> : &G = (V,E) \text{ is a graph, } \\ & k \in Z \text{ and } k\leq|V|, \\ & \text{and G has a simple circle with length at most k}\}
+  \end{split}
+\end{eqnarray*}
+
+1. At first we say LSC is NP problem.\\ 
+We certificate it with a vertices sequence(from $|K|$ to $|V|$) . The verification algorithm checks that this sequence contains each vertex exactly once, and verifying that there is an edge from each vertex in the certificate to the next one given in the certificate.At last, the algorithm checks whether the last vertex can get back to the first vertex. If it passes all the checks, then return 1, else return 0.
+
+And it is easy to know that the verifier runs in polynomial time for at most we check every edges in the graph.
+
+Then the problem is just NP.
+
+2.Secondly we say that LSC is NP-hard by reducing HAM-CYCLE to it.
+From textbook, we know that HAM-CIRCLE is just NP-Complete problem.
+
+Both LSC and HAM-CYCLE takes a graph as a part of input, then for a certain graph G that is a instance of HAM-CIRCLE, we just define $k = |V|$, and $<G,k>$ is a instance of LSC, in this reduction, we just simply copy the original graph G and count the total number of vertices in G, then the translation must be polynomial time.
+
+Now we prove the correctness.
+
+If a graph G contains a Hamilton cycle, then this cycle is just a simple cycle for it just visit each vertex once, and it contains $|V|$ vertices. And then the Hamilton cycle is just a at least $|V|$ simple circle in G.
+
+On the contrary, the largest simple cycle of a graph $G = (V,E)$ is $|V|$, if a graph have a $|V|$ simple cycle, this cycle must traverse all the vertices and each only once, then it is just a Hamilton cycle of the G.
+
+So far, we have proved that the LSC problem is NP-hard. \\ 
+
+As a conclusion, LSC problem is NP-Complete.
+
+\end{document}

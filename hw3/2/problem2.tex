@@ -1,0 +1,110 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{3}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{2}
+\begin{document}
+\maketitle
+\newpage
+\section{Problem 7-2}
+\subsection*{a.}
+if all the elments in the array are equal, then every function random partition will just exclude one element in the array,(result in putting the pivot at the tail of the whole array) and this time, the random-quicksort will be the normal quicksort algorithm in the worst case, thus the running time will be:
+$$ T(n) = T(n-1) + n$$
+$$ T(n) = \Theta(n^{2})$$
+\subsection*{b.}
+The algorithm PARTITION' refering to Algorithm \ref{algo:partition} is just like the PARTITION algorithm, and in worst case, it will scan the whole array for 2 times, thus the running time is still $\theta(r-p)$.
+\\ The principle in the algorithm is that at first we do the normal PARTITION to see if there is equal elements, if there is , then assign the flag to indicate that we need another loop. Next we will re-scan the part containing those elements smaller or equal to the pivot and they are already together. Then we change the condition to pick out those elments that are smaller than the pivots. 
+
+  \begin{algorithm}[h]
+  \caption{PARTITION'}
+  \label{algo:partition}
+  \begin{algorithmic}[1]
+	\REQUIRE A,p,r
+	\ENSURE ~ ~\\ 
+	\STATE {$flag = 0$}
+	\STATE {$x = A[r]$}
+	\STATE {$t = p-1$ }
+	\STATE {$q = p-1$ }
+	\FOR {$i=p$ to $r-1$}
+	  \IF {$A[i] < x$}
+		\STATE {$t = t+1 \leq x$}
+		\STATE {exchange $A[t]$ with $A[i]$}
+	  \ENDIF
+	  \IF {$A[i] = x$}
+		\STATE {$t = t+1 \leq x$}
+		\STATE {$flag=1$}
+		\STATE {exchange $A[t]$ with $A[i]$}
+	  \ENDIF
+	\ENDFOR
+	\STATE {$t=t+1$}
+	\STATE {exchange $A[t]$ with $A[r]$}
+	\IF{$flag = = 1$}
+	  \STATE {$x = A[t]$}
+	  \FOR {$j=p$ to $t-1$}
+		\IF {$A[q] < x$}
+		  \STATE {$q = q+1$}
+		  \STATE {exchange $A[q]$ with $A[j]$}
+		\ENDIF
+	  \ENDFOR
+	  \STATE{$q = q+1$}
+	\ELSE 
+	  \STATE{$q = t$}
+	\ENDIF
+	\LASTCON q,t	
+  \end{algorithmic}
+  \end{algorithm}
+\subsection* {c.}
+Thus the new quicksort algorithm won't sort those parts of the array that contain equal elements.First we randomly select the pivot and exchange it with original pivot to accomplish randomness.You can refer to Algorithm \ref{algo:rquicksort}.
+  \begin{algorithm}[!h]
+  \caption{RandomizedPartition}
+  \label{algo:rp}
+  \begin{algorithmic}[1]
+	\REQUIRE A,p,r
+	\ENSURE ~ ~\\ 
+	\STATE {$i = Random(p,r)$ }
+	\STATE {exchange $A[i]$ with $A[r]$}
+	\STATE{[q,t]=PARTITION'(A,p,r)}
+	\LASTCON q,t
+  \end{algorithmic}
+  \end{algorithm}
+
+  \begin{algorithm}[!h]
+  \caption{Quicksort'}
+  \label{algo:rquicksort}
+  \begin{algorithmic}[1]
+	\REQUIRE A,p,r
+	\ENSURE ~ ~\\ 
+	\IF {$p<r$}
+	\STATE{[q,t]=PARTITION'(A,p,r)}
+	\STATE{Quicksort'(A,p,q-1)}
+	\STATE{Quicksort'(A,t+1,r)}
+	\ENDIF
+	\LASTCON
+  \end{algorithmic}
+  \end{algorithm}
+\subsection* {d.}
+As for my algorithm, there may be two comparison between $z_{i}$ and $z_{j}$.
+And extend the definition of the $X_{ij}$, and we know that P($X_{ij} = 2$) only occurs that the $z_{j}$ is the first pivot selected from [i,j]. And there is another element equal to $z_{j}$, or that $z_{i} = z_{j}$,and $z_{i}$ or $z_{j}$ is the first element selected as pivot in [i,j],we don't know the possibility that the distrubution of equal element, thus we can only give the upper bound.
+
+\begin{eqnarray}
+  \begin{split}
+	E(X_{ij}) &= P(X_{ij}=1) + 2*P(X_{ij}=2) \\
+	&\leq \frac{1}{j-i+1} + 2*\frac{1}{j-i+1} \\
+	&\leq \frac{3}{j-i+1} \\
+  \end{split}
+  \label{equ:newex}
+\end{eqnarray}
+Thus we see that the only change in the Equation Array \ref{equ:newex} is that the constant coefficient.  Then the total expectation is still :
+$$E[X] = O(nlgn)$$
+Notice that if all the elements are equal, the total comparison is just $2(n-1)$.
+\end{document}

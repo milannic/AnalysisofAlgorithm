@@ -1,0 +1,118 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{subfigure}
+\usepackage{epsfig}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{5}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{5}
+\begin{document}
+\maketitle
+\newpage
+\section {Problem 22.5-3} 
+We can use a simple counter example to illustrate the mistake of this algorithm.
+\begin{figure}[h]
+  \centering
+  \epsfig{figure=counterexample_2253_1.eps,scale = 1}
+  \caption{Counter Example}
+  \label{fig:ce}
+\end{figure}
+
+From Figure \ref {fig:ce}, we can see there are two strongly connected components,\{w,u,v,x\}, and \{y\}.
+
+By the first DFS, we can get the Table \ref{tlb:ce}:
+
+\begin{table}[h]
+\centering
+  \begin{tabular}{c|c|c}
+	& d & f \\
+	\hline
+	w & 1 & 10 \\
+	\hline
+	u & 2 & 9 \\
+	\hline
+	v & 3 & 6 \\
+	\hline
+	x & 4 & 5 \\
+	\hline
+	y & 7 & 8 \\
+  \end{tabular}
+\caption{First DFS}
+\label{tlb:ce}
+\end{table}
+
+\begin{table}[h]
+\centering
+  \begin{tabular}{c|c|c}
+	& d & f \\
+	\hline
+	w & 2 & 9 \\
+	\hline
+	u & 3 & 8 \\
+	\hline
+	v & 4 & 5 \\
+	\hline
+	x & 1 & 10 \\
+	\hline
+	y & 6 & 7 \\
+  \end{tabular}
+  \caption{Second DFS}
+  \label{tlb:ce2}
+\end{table}
+
+
+
+If we just re-do the DFS of original graph by the increasing order of the finishing time, the result will be in Table \ref{tlb:ce2}:
+
+
+And we can see from Table \ref{tlb:ce2}, the second DFS cannot separate the two strongly connected components, thus the algorithm given by Professor Bacon isn't right. The problem is that select the remaining vertex $\mathit{i}$ in the strongly connected components C with minimal finishing time cannot ensure that all the vertices of other strongly connected components that there are edges leave C have been visited at that time.
+
+
+
+\section {Problem 22.5-5} 
+At first we use the algorithm in Introduction to Algorithm 3rd Edition Page 617 to compute the strongly connected components, the time complexity will be O(V+E). 
+
+And from that algorithm, each vertex belongs to a certain strongly connected components, we number each strongly connected components of a integer from 1 to $|V|$, then for each vertex $\mathit{u}$, it will be associated with a certain integer as a additional property,denoting as $\mathit{u}.no$. 
+
+Traverse the whole V, construct $V_{scc}$ of each distinct $\mathit{u}.no$. 
+
+To prevent duplication to record each $\mathit{u}.no$, we set a array FlagV[1..$|V|$] with all its elements are 0 after initialization to indicate whether this strongly connected component has been added to the $V_{scc}$, in the first time we see a certain $\mathit{u}.no$, we set the corresponding element in FlagV$[\mathit{u}.no]$ to be 1, and add this $\mathit{u}.no$ to $V_{scc}$, when we see $\mathit{u}.no$ again we just ignore it and go on.
+
+The time complexity will also be O(V).
+
+After constructing $V_{scc}$, we construct another set called $E_{scc}$ by traversing the whole E. For each $(\mathit{u},\mathit{y}) \in E$, we add its corresponding $(\mathit{u}.no,\mathit{y}.no)$ to $E_{scc}$ only:
+
+1. It is the edge between to two strongly connected components and 
+
+2. It is the first edge between these two strongly connected components.
+
+To achieve this, we set a $|V|*|V|$ matrix called FlagE with all its elements are 0 after initialization,\textbf{by memory manipulation method, we can finish initialization in O(1)}. 
+
+For a certain $(\mathit{u},\mathit{y}) \in E$, we consider $(\mathit{u}.no,\mathit{y}.no)$, 
+
+If $\mathit{u}.no \neq \mathit{y}.no$ and $FlagE[\mathit{u}.no][\mathit{y}.no] \neq 1$, we add $(\mathit{u}.no,\mathit{y}.no)$ to $E_{scc}$, and set $FlagE[\mathit{u}.no][\mathit{y}.no]$ to 1, else we just ignore this edge.
+
+The time complexity will also be O(E) for traversing the whole E.
+
+If no such O(1) memory manipulation method exists in our problem environment, we can change E to E' by transfer $(\mathit{u},\mathit{y})$ to$(\mathit{u}.no,\mathit{y}.no)$, remove all the self-loops and edge within one strongly connected component, then we apply radix sort to the remaining E',costing O(E+V)(if counting sort used in every component of $(\mathit{u}.no,\mathit{y}.no)$).
+
+For this sorted remaining E', we add the first element to the $E_{scc}$, then traverse the array, if the element is different from the previous element, then we add it to $E_{scc}$. The time complexity of this alternative method is also O(E+V) 
+
+Then we can finish the whole algorithm in O(E+V). 
+
+The correctness of the algorithm is easy to prove. First we compress all the vertices of the same strongly connected components into one vertex in constructing $V_{scc}$. 
+
+Then we only consider those edges between two strongly connected components,and by FlagE, we only add one vertices for each two strongly connected components in constructing $E_{scc}$.
+
+
+\end{document}

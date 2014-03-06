@@ -1,0 +1,73 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{4}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{2}
+\begin{document}
+\maketitle
+\newpage
+
+\section*{Problem 2.} 
+Because we can only visit per bikestand once, the problem is treated as a non-preemptable job schedule problem.
+At first we say that for such a maximum start time schedule problem if there is a certain schedule with idle time between any two neighbor jobs, we can remove those space to get a tighter scheduler and the solution won't be worse than original one, then we can always finish a job and start another job and can still find a optimum solution if there are. This shrinks our solution space.
+Let B be the set of all the bikestands and S be any schedule.
+\\We firstly consider that the problem to \textbf{find the maximum compatible set} M'. 
+\\ It is obvious that this problem has optimal substructure.
+\begin{equation*}
+  M'(B,t) = \left \{
+	\begin{array}{l}
+	  {\emptyset} \qquad \text{if} \qquad B = \emptyset  \quad \text{or} \quad t > max_{b_{i}\in B}(c_{i}-t_{i}) \\
+	  { \{b_{i}\} + max_{b_{i}\in B}(M'(B-\{b_{j}|b_{j} \text{not compatible with}~ t+c_{i} \},t+c_{i}))} \qquad \text{else}  \\
+	\end{array}
+  \right \}
+\end{equation*}
+Assume that for the optimal solution of M'(B,t) is $S_{op}$, the first job excuted is just $b_{i}$. Then we take out $b_{i}$, change current time, and delete all the jobs incompatible to get the subproblem $M'(B',t+c_{i})$. \\
+Then $S_{op} - \{b_{i}\} = S_{op}(M'(B',t+c_{i}))$
+\\ The proof is simple, if $S_{op} - \{b_{i}\}$ is not the optimum of the subproblem, we can just change the sub-schedule to the optimal solution, thus the new $S_{new} > S_{op}$, this contradicts with our assumption.
+
+
+\textbf{Now consider our problem E(B,t)},our problem can be regarded as whether the maximum compatible set of the M'(B,0) is equal to B(regardless of the sequence), and the problem only requires the schedule that all the bickstands are refilled in time, that is, if there is no such schedule, we just need to say that no such answer instead of providing the actual maximum compatible set. 
+
+Under this situation, all the jobs must be appear in the schedule, then we can apply greedy algorithm to ensure that if there exsit schedules that all the jobs can be finished then the schedule created by our greedy algorithm must be included in.  
+
+\textbf{The greedy algorithm is that we always take the job $b_{i}$ with the earliest $c_{i}$ in the remaining job queue to execute. }
+
+Then we prove the safety of the greedy algorithm.
+
+Assume that $b_{i}$ is the bikestand with the earliest $t_{i}$ in B for the problem E(B,t), in fact $b_{i}$ must be compitable with t, other wise the answer for the question is no. Let one solution for E(B,t) be $SE_{op}$, if the first element in $SE_{op}$ is $b_{i}$, then we have finished the proof, otherwise, W.L.O.G, we assume there is only $b_{k}$ before $b_{i}$, we can simply exchange $b_{k}$ with $b_{i}$, the new sequence is also compatible, because $b_{i}$ is the job with the earliest $t_{i}$, and if in the $SE_{op}$, $b_{i}$ finishes in $f_{i}$, then there must be $f_{k} < f_{i} \leq t_{i} \leq t_{k}$, after the exchange, $f'_{i}<f'_{k} =  f_{i} \leq t_{i} \leq t_{k}$, so the new schedule must also be compatible, because the excange won't change the elements in the $SE_{op}$, then our new $|SE_{new}| = |SE_{op}|$, it is also a solution to our problem.
+
+So far we have proved that if there are schedules all the jobs can be finished then our greedy algorithm safely find one of them.
+
+The pseudo-code is below the running time is $\theta(nlgn) $ dominated by the \textbf{sort},the greedy algorithm only runs a length-n loop and costs O(n):
+\begin{algorithm}[h]
+  \caption{refill}
+  \label{algo:refill}
+  \begin{algorithmic}[1]
+	\REQUIRE B,C,T
+	\ENSURE ~ ~\\ 
+	\STATE {sort B in the ascending order correspoding to T}
+	\STATE {$let K[1..|B|] = B$}
+	\STATE {$t = 0$}
+	\STATE {$current = 0$}
+	\WHILE {$B \neq \emptyset$ }
+	  \STATE {$current = POP(B)$}
+		\IF {$t > T[current] - C[current]$}
+		  \STATE {$ K = \emptyset$}
+		\ELSE 
+		  \STATE {$ t = t+C[current] $}
+		\ENDIF
+	\ENDWHILE
+	\LASTCON $K$
+  \end{algorithmic}
+\end{algorithm} 
+\end{document}

@@ -1,0 +1,110 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{fancybox}
+\usepackage{tikz}
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{epsfig}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{7}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{6}
+\begin{document}
+\maketitle
+\newpage
+\section {Problem 35-4}
+\subsection*{a.}
+Such a example is shown in Figure \ref{fig:3541} where we have 3 edges in the graph and \{1\} is a maximal matching for the reason that after choosing edge 1, vertices A,B have been excluded, then no other edges can be added in to the set while the maximum matching is \{0,2\}. 
+\begin{figure}[!h]
+  \centering
+  \epsfig{figure=./354.eps,scale = 1}
+  \caption{Maximal Matching Is Not Maximum Matching}
+  \label{fig:3541}
+\end{figure}
+
+\subsection*{b.}
+To build a $O(E)$ algorithm we need to specify the input data structure we use, at first there is two integer numbers $|V|$ and $|E|$, and a array of all the edges each indicating the indexes of the pair of vertices, at last we need a adjacent array for each vertex, and the element is a link list to those edges associated with this vertex,and \textbf{the adjacent list is a must to ensure the algorithm only runs in O(E), otherwise we can only build O(V+E),while V goes to infinity the O(V+E) will be O(E)}.  \\
+After the explanation, the algorithm is presented below:\\
+
+\begin{algorithm}[h]
+\caption{Greedy Maximal Matching}
+\label{algo:SJF}
+\begin{algorithmic}[1]
+  \REQUIRE G
+  \ENSURE ~ ~\\ 
+  \STATE {Flag is a array length E, and $S = \emptyset$}
+  \FOR {each $e \in E$}
+	\STATE {$Flag[e] = 1$}
+  \ENDFOR
+  \FOR {each $e \in E$}
+	\IF{FLAG[e] = = 1}
+	  \STATE {let $v,w$ be the two vertices associated with e}
+	  \FOR{all edges $e'$ associated with $v$ }
+		\IF{$e' \neq e$}
+		  \STATE {FLAG[$e'$] = 0}
+		\ENDIF
+	  \ENDFOR
+	  \FOR{all edges $e'$ associated with $w$ }
+		\IF{$e' \neq e$}
+		  \STATE {FLAG[$e'$] = 0}
+		\ENDIF
+	  \ENDFOR
+	\ENDIF
+  \ENDFOR
+  \FOR{each $e \in E$}
+	\IF{$FLAG[e] = = 1$}
+	  \STATE {$S=S \bigcup \{e\}$}
+	\ENDIF
+  \ENDFOR
+  \LASTCON $S$
+\end{algorithmic}
+\end{algorithm}
+
+\noindent At first we say that this method can find a maximal matching.\\ 
+Because we check every edge, and pick up each edge and set it to the matching if there is no any other edge associated with any vertex associated with this edge picked up before. \\ That is, once we take out a edge associated with $v$ and $w$, then any other edges associated with $v$ or $w$ won't be selected in the following step, this property make sure that every vertex only appear at most once in S. Then S is a matching. And S is the maximal matching for we traverse all the edges if there is any other edge can be added into S, it must be in S.
+
+Then we say that the algorithm runs in O(E), obviously, there are three loops in the algorithm, and the first one and the last one runs in O(E).\\ 
+And we consider line 6 to line 19, it seems that we do it  in $O(E^{2})$ time, but actually, for each edge $e(u,v)$, we at most visit it 3 times. One is when we traverse all the edges, the second time is when  we traverse the link-list associated with $u$, the rest is when we traverse the link-list associated with $v$, and notice that if we pick out a edge $e(u,v)$, for any other edges $e'$ associated with $u$ or $v$, when it has been visited in the out most loop, its $FLAG[e']$ has already set to 0, then it won't goes into the inner loop. Then the total time will also be O(E).
+
+Now we have finished the proof, then the total run time of the algorithm is O(E).
+
+\subsection*{c.}
+Let $M^{*}$ be the maximum matching in G and $C^{*}$ be the minimal vertex cover in G, then for every C, we have $|C| \geq |C^{*}|$. \\
+And as a minimal vertex cover in G, $C^{*}$ also covers $M^{*} \subseteqq E$, and for $M^{*}$, we know that each vertex in V appears in it at most once, that is, all the edges in $M^{*}$ are disjoint. Then to cover all the edges in $M^{*}$, we need at least $|M^{*}|$ vertices, then we have :
+$$ |C^{*}| \geq |M^{*}| $$
+$$ |C| \geq |M^{*}| $$
+Then the maximum matching is the low bound for all the vertex covers in G.
+
+\subsection*{d.}
+Let assume that T is vertices set appeared in maximal matching M, then we get $T' = V\backslash T$, and construct a new $G' = (T',E')$ induced by T. And we can draw the conclusion that there is no edge in $G'$, that is,$G'$ only contains isolate vertices. 
+
+We can prove the conclusion like this, if there is some edge between $v \in T'$ and $w \in T'$, for both $v$ and $w$ are not in T, then we can add $(v,w)$ to M to build a new $M'$without breaking the property of matching. Then $ M \subsetneqq M'$, this contradicts the assumption that M is maximal matching.
+
+\subsection*{e.}
+For a maximal matching M, for subsection d, we know that every edge in G is associated with at least one vertex in M for $E' = \emptyset$ then T is a vertex cover in G.\\
+Then we prove that $|T| = 2|M|$, because in M, there are no two edges sharing any endpoints, otherwise the edge set won't be a matching, then one edge in M represent two unique vertices. 
+Then T is a vertex cover and $|T| = 2|M|$ where M is a maximal matching.
+
+
+\subsection*{f.}
+For a certain G, we define $C_{*}$ to be the optimal vertex cover, and $M_{*}$ be the maximum matching, then $C$ is a certain vertex cover and $M$ is any maximal matching produced by the algorithm we present in subsection b. \\
+Then we have :
+\begin{eqnarray*}
+  \begin{split}
+	|M_{*}| \leq& |C^{*}| \\
+	        \leq& |C| \\
+	        =& 2|M|  \\
+  \end{split}
+\end{eqnarray*}
+Then approximation ratio is $\frac{|M_{*}|}{|M|} = 2$.
+
+
+
+\end{document}

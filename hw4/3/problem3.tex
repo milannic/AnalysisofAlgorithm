@@ -1,0 +1,72 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multicol}
+\usepackage{epsfig}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{4}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{3}
+\begin{document}
+\maketitle
+\newpage
+\section*{Exercise 16.1-3}
+\subsection*{1.least duration}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+	\hline
+	\textbf{i} & 1 & 2& 3& 4& 5 \\
+	\hline
+	\textbf{s\_time} & 0 & 3& 5& 6& 9 \\
+	\hline
+	\textbf{f\_time} & 3 & 6& 7& 9& 12 \\
+	\hline
+  \end{tabular}
+  \caption{CounterExample1}
+  \label{tab:ce1}
+\end{table}
+For Table \ref{tab:ce1},if we choose project has the least duration at first, we will take $s_{3}$, then we can only take $s_{1}$ and $s_{5}$, actually the optimum is $\{ s_{1},s_{2},s_{4},s_{5}$.
+\subsection*{2.least overlap}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
+	\hline
+	\textbf{i} & 1 & 2& 3& 4& 5& 6& 7& 8& 9& 10& 11\\
+	\hline
+	\textbf{s\_time} & 0&	8&	8&	8&	11&	17&	20&	23&	23&	23&	26 \\
+	\hline
+	\textbf{f\_time} & 13&17&	17&	17&	20&	23&	26&	29&	29&	29&	29 \\
+	\hline
+	\textbf{overlap} & 3 & 4& 4& 4& 4& 2& 4& 4& 4& 4& 3 \\
+	\hline
+  \end{tabular}
+  \caption{CounterExample2}
+  \label{tab:ce2}
+\end{table}
+For Table \ref{tab:ce2},if we choose project has the least overlap at first, we will take $s_{6}$, can only take at most 3 activites, actually we can easily take $\{ s_{1},s_{5},s_{7},s_{11}$.
+
+\subsection*{3.earliest start time}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|}
+	\hline
+	\textbf{i} & 1 & 2& 3& 4& 5 \\
+	\hline
+	\textbf{s\_time} & 0 & 3& 5& 6& 9 \\
+	\hline
+	\textbf{f\_time} & 12 & 6& 7& 9& 12 \\
+	\hline
+  \end{tabular}
+  \caption{CounterExample3}
+  \label{tab:ce3}
+\end{table}
+For Table \ref{tab:ce3},if we choose project has the earliest time at first, we will take $s_{1}$, and then this is the only project compatible with others. And it is obviously wrong, because we can take $s_{2}$ and $s_{4}$ to make a larger set.
+\end{document}

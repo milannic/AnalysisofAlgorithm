@@ -1,0 +1,76 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{fancybox}
+\usepackage{tikz}
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{3}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{6}
+\begin{document}
+\maketitle
+\newpage
+\section {Problem 15-12}
+At first we sort the position and assign each player into their position array, then we give some notations,V[i,j],C[i,j] each means the VORP and cost of the $j$th free-agent player in position i.\\
+And $S_{op}(i,X)$ means the optimum set of player from first i positions and the total maximum budget is X.
+Then we need to find the optimal sub-structure in the problem. And the optimum sub-structure is that:\\
+1.if there is a free-agent player in position i in $S_{op}(i,X)$, denoting it as $P_{i,o}$ and its index in VORP and cost table is $(i,j_{io})$, then we exclude $P_{i,o}$ from 
+$S_{op}(i,X)$ to make a new set S', $S' = S_{op}(i-1,X-C[i,j_{io}])$.
+\\2.if there is no certain free-agent player in position i in $S_{op}(i,X)$, then $S_{op}(i,X) = S_{op}(i-1,X)$.
+
+It is easy to prove this.
+Let's assume that $S_{op}(i,X)$ contain a $P_{i,o}$, but 
+$$S_{op}(i-1,X-C[i,j_{io}]) > S'(i-1,X-C[i,j_{io}]) = S_{op}(i,X)-P_{i,o}$$
+And $ S_{op}(i-1,X-C[i,j_{io}] $ is different from $S'(i-1,X-C[i,j_{io}])$ in at least one position selection, assuming $P_{i-1,o}$, then we change our plan to make $S_{op}(i-1,X-C[i,j_{io}] + P_{i,o} = S'(i,X) > S_{op}(i,X)$ \\ 
+Thus our original plan is not the optimum, this conflicts with our hypothesis.
+Similarily, when $S_{op}(i,X)$ contain no $P_{i,o}$, we can prove the sub-structure.
+\\[4px]
+As for the pseudo-code, we first arrange our player data to build V[i,j],C[i,j],P[i,j] table, every P players in the same position(such as i) are set to the sub-array,V[i,:](VORP) and C[i,:](Cost). \\And we know that the unit of price is 100,000, then we define a 2-D array T with the dimension of [N+1,X/100,000+1].\\ 
+There is a three level nested loop in the Algorithm \ref{algo:dp}, firstly we check each position,next we check every player in this position, then for every possible money,we find the $S_{op}(i,m)$.\\ 
+In the beginning of the most outside loop, we just initialize the $T[i,0 \cdots mlength] = T[i-1,0 \cdots mlength]$, if there is T[i,m] doesn't change in this loop, it means that $S_{op}(i,m)$ doesn't contain any player in position i.\\
+Thus the time complexity of the algorithm is $\Theta(XNP)$ and the space complexity is $\Theta(NX)$
+
+\begin{algorithm}[h]
+  \caption{Sign-Free-Player-FINDSOLUTION}
+  \label{algo:dp}
+  \begin{algorithmic}[1]
+	\REQUIRE Data,X,N
+	\ENSURE ~ ~\\ 
+	\STATE{From Data Build Table V[i,j] and C[i,j]}
+	\STATE{moneyunit = 100,000}
+	\STATE{mlength = X/moneyunit}
+	\STATE{Let $T[0 \cdots N,0 \cdots mlength]$ be the new array with all the elements are 0}.
+	\STATE{Let $K[0 \cdots N,0 \cdots mlength]$ be the new array with all the elements are 0}.
+	\FOR {$i = 1$ to N}
+	\STATE {$T[i,0 \cdots mlength] = T[i-1,0 \cdots mlength]$}
+	  \FOR {$j=1$ to P}
+		\FOR {$ m =1$ to mlength}
+		  \IF {$C[i,j]/moneyunit <= m$}
+			\IF {$V[i,j]+T[i-1,m-C[i,j/moneyunit] > T[i,m]$}
+			  \STATE {$T[i,m] = V[i,j]+T[i-1,m-C[i,j/moneyunit]$}
+			  \STATE {$K[i,m] = j$}
+			\ENDIF
+		  \ENDIF
+		\ENDFOR
+	  \ENDFOR
+	\ENDFOR
+	\STATE{ $count = mlength$}
+	\FOR{$pos = n$ to 1}
+	  \IF{$K[pos,money] \neq 0$}
+		\STATE{PRINT ( pos,V[pos,K[pos,count]],C[pos,K[pos,count]] )}
+		\STATE{$count= count- C[pos,K[pos,count]$}
+	  \ENDIF
+	\ENDFOR
+	\LASTCON T[N,mlength]
+  \end{algorithmic}
+\end{algorithm}
+
+\end{document}

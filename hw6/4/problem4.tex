@@ -1,0 +1,136 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\setlength{\parindent}{0cm}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{6}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{4}
+\begin{document}
+\maketitle
+\newpage
+\section{Exercise 25.2-5}
+It is wrong. Just take a look at the following example, we present vertex in the sequence A,B,C in the matrix, from the Floyd-Warshall algorithm we have : \\
+\begin{figure}[h]
+  \centering
+  \epsfig{figure=./2525.eps,scale = 0.4}
+  \caption{Counter Example}
+  \label{fig:ce1}
+\end{figure}
+
+
+\begin{multicols}{2}
+$
+L^{(0)} =
+ \begin{pmatrix}
+   0 & 0 & 0\\
+   0 & 0 & 0\\
+   0 & 0 & 0\\
+ \end{pmatrix}
+$
+\columnbreak
+$
+D^{(0)} =
+ \begin{pmatrix}
+   NIL & a & a \\
+   b   & NIL & b \\
+   c & c & NIL \\
+ \end{pmatrix}
+$
+\end{multicols}
+
+
+\begin{multicols}{2}
+$
+L^{(1)} =
+ \begin{pmatrix}
+   0 & 0 & 0\\
+   0 & 0 & 0\\
+   0 & 0 & 0\\
+ \end{pmatrix}
+$
+\columnbreak
+$
+D^{(1)} =
+ \begin{pmatrix}
+   NIL & a & a \\
+   NIL & a & a \\
+   NIL & a & a \\
+ \end{pmatrix}
+$
+\end{multicols}
+\begin{multicols}{2}
+$
+L^{(2)} =
+ \begin{pmatrix}
+   0 & 0 & 0\\
+   0 & 0 & 0\\
+   0 & 0 & 0\\
+ \end{pmatrix}
+$
+\columnbreak
+$
+D^{(2)} =
+ \begin{pmatrix}
+   NIL & a & a \\
+   NIL & a & a \\
+   NIL & a & a \\
+ \end{pmatrix}
+$
+\end{multicols}
+\begin{multicols}{2}
+$
+L^{(3)} =
+ \begin{pmatrix}
+   0 & 0 & 0\\
+   0 & 0 & 0\\
+   0 & 0 & 0\\
+ \end{pmatrix}
+$
+\columnbreak
+$
+D^{(3)} =
+ \begin{pmatrix}
+   NIL & a & a \\
+   NIL & a & a \\
+   NIL & a & a \\
+ \end{pmatrix}
+$
+\end{multicols}
+
+And it is obviously wrong, that in the final result we even change the diagonal elements in predecessor matrix, the reason is that in the text book, we say that only when $k \neq j$ and there is a path from i though k to j, we should change $\pi_{ij}^{(k)}$ to $\pi_{kj}^{(k-1)}$, and in the formal definition, this constraint $k \neq j$ is presented by the equal sign in the first inequality.
+If we move the equal sign to the second inequality, it will cancel that constraint, then it may produce the wrong answer.  
+Just take a look at what will happen in the formula when k = j.
+\\For $d_{ik}^{(k-1)} = d_{ik}^{(k-1)} + 0 = d_{ik}^{(k-1)} + d_{kk}^{(k-1)} $ \\
+Original:$\pi_{ij}^{k} = \pi_{ij}^{k-1}$
+
+Modified:$\pi_{ij}^{k} = \pi_{kk}^{k-1}$
+\\And this is obviously wrong.
+
+\section{Exercise 25.1-10}
+Just realize that if there are minimal negative circles in the graph G with length m, when we use SLOW-ALL-PAIRS-SHORTEST-PATHS method to calculate L matrix, there must be at least one vertex i that $l_{ii}^{(m)} < 0 $ in $L^{(m)}$ and this is the first time that there are negative values in the diagonal of L.
+
+Because $l_{ij}^{(m)}$ in $L^{(m)}$ represents the shortest path weight of which the length is no larger than m from i to j, then if there is a minimal negative circle with length m, a new path value must be less than the original diagonal element $l_{ii}^{(m-1)}$ which is zero, thus appear in somewhere in the diagonal. 
+
+And we just iterate those paths with length 1, length 2 $\ldots$, then the minimal length negative circle will also occur firstly in the diagonal and before it there must be all 0 in the diagonal, then we just return m. 
+
+That is,in each iteration, we just need to find whether there is any negative value in the diagonal.
+
+The algorithm can be concluded as below :
+
+We run SLOW-ALL-PAIRS-SHORTEST-PATHS, and each iteration we check all the diagonal element $l_{ii}^{(m)}$, if there is any negative value, we just return the m, else we keep on iteration, when m reaches n+1 it means that there is no negative circle in the graph for the max circle is with length n.
+
+Then the running time of the algorithm is just the same as SLOW-ALL-PAIRS-SHORTEST-PATHS which is $O(n^{4})$, and to be more accurate, if there are negative circles and the minimal length of them is m*, then the running time of the algorithm is $\theta(n^{3}min(m*,n))$, and in each iteration, we need to store 3 L matrices, then the space complexity is $O(n^{3})$.
+
+\end{document}

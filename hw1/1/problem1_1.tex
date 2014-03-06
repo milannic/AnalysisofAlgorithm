@@ -1,0 +1,60 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{1}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{1}
+\begin{document}
+\maketitle
+\newpage
+\section{problem 2-3 Correctness of Horner's rule}
+\subsection*{a.}
+  \begin{algorithm}[htb]
+  \begin{algorithmic}[1]
+	\ENSURE ~ ~\\ 
+	  \STATE {$y=0$}
+	  \FOR {$i=n$ \textbf{downto} $0$}
+		\STATE{$y=a_i+x*y$}
+	  \ENDFOR
+  \end{algorithmic}
+  \end{algorithm}
+  
+  let $c_{i}$ denote the execution cost of the \emph{i}th line, then the running time of the code fragment for Horner's rule is $T(n)=c_{1}+c_{2}n+c_{3}n=\Theta(n)$.
+\subsection*{b.} The presudocode of naive polynomial evaluation algorithm:\\
+  \begin{algorithm}[htb]
+  \caption{Naive Polynomial Evaluation Algorithm}
+  \begin{algorithmic}[1]
+	\REQUIRE $y=0$,$a_0,a_1,\cdots,a_n,x$\\ 
+	\ENSURE ~ ~\\ 
+	\FOR {$i=0$ upto $n$} 
+	  \STATE {$x\_sum=1$}
+		\FOR{$k=1$ upto $i$}
+		\STATE {$x\_sum=x*x\_sum$}
+		\ENDFOR
+	  \STATE{$y=y+x\_sum*a_{i}$}
+	  \ENDFOR
+	\LASTCON ~ ~ $y$\\
+  \end{algorithmic}
+  \end{algorithm}
+
+let $c_{i}$ denote the execution cost of the \emph{i}th line, 
+then the running time of naive polynomial evaluation algorithm is $T(n)=(c_{1}+c_{2}+c_{6})n+(c_{3}+c_{4})n^{2}=\Theta(n^2)$,and it is worse than $\Theta(n)$ which is the running time of Horner's rule.
+\subsection*{c.} The Loop Invariant of Horner's rule algorithm is:$$y=\sum_{k=0}^{n-(i+1)}a_{k+i+1}x^k$$\\
+\textbf{Initialization:}\\before the first loop begins,$i=n$~and~$$y=0=\sum_{k=0}^{-1}a_{k+n+1}x^k$$\\
+\textbf{Maintainance:}\\Let's assume before the $l$th$(l\geq0)$ loop, The Loop Invariant remains true, at that time, $i=n-l+1$,then we will prove that after this loop ,The Loop Invariant is still true.\\
+$y_{l}$ denotes the value of y after the \emph{l}th loop. We have $y_{l-1}=\sum_{k=0}^{l-2}a_{k+n-l+2}x^k$.\\
+After the \emph{l}th loop, we get $y_{l} = a_{n-l+1} + y_{l-1}*x = a_{n-l}+\sum_{k=0}^{l-2}a_{k+n-l+2}x^{k+1}=a_{n-l}+\sum_{k=1}^{l-1}a_{k+n-l+1}x^{k}$ then we have:$$y_{l}=\sum_{k=0}^{l-1}a_{k+n-l+1}x^k$$ now we have proved that during every loop, The Loop Invariant stays true.\\
+\textbf{Termination:}\\After n+1 loops, The Loop Invariant should be $y_{n+1} = \sum_{k=0}^{n-(-1+1)}a_{k+(-1)+1}x^{k} = \sum_{k=0}^{n}a_{k}x^{k}$.
+
+\subsection*{d.} 
+As I proved in previous section, The Loop Invariant remains true during the whole procedure of the algorithm, and the final The Loop Invariant which is also the output of the code fragment is just the $$\sum_{k=0}^{n}a_{k}x^{k}$$ this formula is just the defination of the polynominal, Therefore the correctness of Horner's rule algorithm code is proved.
+\end{document}

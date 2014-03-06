@@ -1,0 +1,38 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{5}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{1}
+\begin{document}
+\maketitle
+\newpage
+
+\section*{Exercise 17.2-1}
+
+At first we assume that the copy operation isn't belong to the n stack operations and is called automatically to copy the stack. 
+
+For there is at most k elements in the stack, thus the actual cost of stack COPY operation is O(k), by amortized analysis, we should reduce it to no larger than O(1).
+
+Notice that the stack COPY operation occurs every k operations, then for these interval k POP or PUSH operations, we can raise their actual cost by making a amortized cost to get enough credit to counteract the actual cost of COPY operation.
+
+Then we set both amortized cost of PUSH and POP to \$2, the amortized cost of COPY to \$0.
+
+For every PUSH operation, other than its real cost \$1, we still save a \$1 credit, so does POP operation, then for every k operations, we save \$ k credits, and COPY operation at most cost \$k, thus our credit will never be negative in any stage.
+
+Above all, we have successfully reduced the amortized costs of all operations to O(1). 
+
+For every n operations, the total amortized cost is just O(n).
+
+
+
+\end{document}

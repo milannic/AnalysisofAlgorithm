@@ -1,0 +1,116 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{4}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{2}
+\begin{document}
+\maketitle
+\newpage
+\section{Problem 16-2}
+\subsection*{a.}
+Let M(S) be the problem to minimize the total completion time of set S. Then we have:
+\begin{equation}
+  M(S) = \left\{
+	\begin{array}{lcl}
+	  0 & \text{if} & {S = \emptyset} \\
+	  min_{a_{i} \in S}(\frac{(|S|-1)M(S-\{a_{i}\})+|S|p_{i}}{|S|}) & \text{else} &  \\
+	\end{array}
+  \right\}
+\end{equation}
+It is easy to prove that M(S) has optimal substructure, for a certain arrangement of S, let we denote array $K[1..|S|]$ as the job sequence, $K[i] = a_{j}$.
+\\ If our $K_{op}[2..|S|]$ is not the optimum, we can re-arrange it to optimum, thus our new $K_{new}[1..|S|] < K_{op}[1..|S|]$, this conflicts with our hypothesis.
+
+And for a certain $K_{random}[1..|S|]$,from the recursive formula above, we can calculate : 
+$$M(S|K_{random}) =\frac{1}{n} \sum_{i=1}^{|S|} c_{i} = \sum_{i=1}^{|S|}\frac{|S|-i+1}{|S|}p_{k[i]}$$
+That is, to get the mimimum of M(S), we need to ensure:
+$c_{k[i]} \leq c_{k[j]}$,if $i<j$.
+To prove this, we just consider, if there is $p_{k[i]} > p_{k[j]}$ and $i<j$, then we exchange them to get new sequence K'
+$$M(S|K) - M(S|K') = \frac{j-i}{|S|}(p_{k[i]}-p_{k[j]})>0$$
+Our new sequence will be better than old one, then we keep on exchange inversion elements, then we will get the minimum.
+\\{\bfseries 
+  So our algorithm is that let shortest job runs first.
+}
+\\ The pseudo-code is :
+\begin{algorithm}[h]
+\caption{ShortestJobFirst'}
+\label{algo:SJF}
+\begin{algorithmic}[1]
+  \REQUIRE P,S 
+  \ENSURE ~ ~\\ 
+  \STATE {$mean = 0$}
+  \STATE {$S_{op} = \text{Sort S correponding to P in increasing order}$}
+  \FOR {$i = 1$ to $|S|$}
+  \STATE { $mean += \frac{|S|-i+1}{|S|}  P[S_{op}[i]] $}
+  \ENDFOR
+  \LASTCON $S_{op}$,mean	
+\end{algorithmic}
+\end{algorithm}
+The running time is mainly due to the sort, and we can finish the sort in $O(nlgn)$ time, and the another loop only takes $O(n)$, so the total running time is $O(nlgn)$.
+
+\subsection*{b.}
+When task is preemptable,and release time attribute is added to each job, we must re-modify our original algorithm, recall that the correctness of our algorithm is ensured by the fact that every time current running job is the shortest job in the remaining job set, and any change in the sequence will result in increasing of average completion time.
+\\When with preemption and release time, things have changed.\\ 
+Each time a new task is avaliable, remainning job sequence is also changing, then current running task may not be the shortest job if the remaining time of it is longer than the new one. If so, our schedule sequance may not be able to get optimum. \\
+And we still need to prove that the period between two new tasks are avaliable, the problem is the same as subsection a even if preemption is permitted. The answer is easy to know,because everytime we choose the least remaining job to run, then if a certain job is preempted, thus the remaining part of current running job will also be smaller than that preempting job. Thus the optimum condition is broken. \\  
+And when a new task is avaliable, it won't change the relative optimum sequence of original job set. Because you can treat this new job as something constant to our original problem with less jobs. \\ 
+Finally, we give our new algorithm, the main logic is as below(just illustrative, not exact).
+\\ 0. Put the first releasing job to the active job list.
+\\ 1. While active job list is not null, or there is still non-active job.
+\\ 2. take the job in the active job list with least remaining time to run. 
+\\ 3. If the job is finished, go to step 1.
+\\ 4. When a new job is avaliable, modify current job's remaining time,add current job and the new job to the active job list.
+\\ 5. go to step 1. 
+\\ The pseudo-code is as below: and the major factor of time complexity is the insert procedure in every loop stage, if we use heap to maintain the queue, every insert will cost $O(lgn)$, thus our algorithm will be $O(cn+c_{2}nlgn) = O(nlgn)$ 
+\begin{algorithm}[h]
+\caption{ShortestJobFirst'}
+\label{algo:SRJF}
+\begin{algorithmic}[1]
+  \REQUIRE P,S,R 
+  \ENSURE ~ ~\\ 
+  \STATE {$time = 0,currentjob =0, UA = S, PR = P, A = \emptyset$}
+  \STATE {Let $C[1..|S|]$ be the new array with all the elements are 0}
+  \STATE {$\text{Sort UA correponding to R in increasing order}$}
+  \FOR {$i=1 to |S|$}
+	\IF {$i = = 1$}
+	  \STATE {$currentjob = UA[i],time = R[currentjob]$}
+	\ELSE
+	  \WHILE{$time+PR[currentjob]<=R[UA[i]]$}
+		  \STATE{$C[currentjob] = time+PR[currentjob],time = time+PR[currentjob]$}
+		  \IF {$A \neq \emptyset$}
+			\STATE{$currentjob = POP(A)$}
+		  \ELSE
+			\STATE{$currentjob = 0$}
+			\STATE {BREAK}
+		  \ENDIF
+		\ENDWHILE
+		\IF{$currentjob = 0$}
+			\STATE{$currentjob = UA[i],time = R[UA[i]]$}
+		\ELSE
+		  \STATE {$PR[currentjob] -= (R[UA[i] -time), time = R[UA[i]]$}
+		  \STATE {Insert UA[i] into A correponding to PR in increasing order}
+		  \IF {$PR[currentjob]<PR[TOP(A)]$}
+			\STATE {Exchange $TOP(A)$ with currentjob}
+		  \ENDIF
+		\ENDIF
+	\ENDIF	
+  \ENDFOR
+  \STATE{$C[currentjob] = time + PR[currentjob],time += PR[currentjob]$}
+  \WHILE{$A \neq \emptyset$}
+	\STATE{$currentjob = POP(A) $}
+	\STATE{$C[currentjob] = time + PR[currentjob],time += PR[currentjob]$}
+  \ENDWHILE
+  \STATE {$mean = MEAN(C)$}
+  \LASTCON mean	
+\end{algorithmic}
+\end{algorithm}
+\end{document}

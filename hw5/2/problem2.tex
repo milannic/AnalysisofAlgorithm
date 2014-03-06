@@ -1,0 +1,131 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{5}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{2}
+\begin{document}
+\maketitle
+\newpage
+\section{Problem 17-2}
+\subsection*{a.}
+There are $lg\lceil (n+1) \rceil$ groups in all, we denote it as k, and the length of them will be $2^{0},2^{1},\cdots,2^{k-1}$.
+
+Notice that elements in $A_{i}$ and $A_{j}$ have no special relationship with each other, thus we even the n elements have been separated into k groups, in the worst case we still need to searching all these k groups to find the target elements when all k groups are full.
+
+For a certain sorted group $A_{i}$, we can apply regular binary search to it, the time complexity will be $O(m)$, m is the number of elements in $A_{i}$,and when the target element isn't in any subarray, the binary search for each subarray will be $\Theta(m)$, then it will be the worst case.
+
+A formula will be:
+
+\begin{eqnarray}
+  \begin{split}
+	T(n) =& \Theta(\sum\limits_{i=0}^{lg\lceil (n+1) \rceil-1}lg(2^{i})) \\
+	     =& \Theta(\sum\limits_{i=0}^{lg\lceil (n+1) \rceil-1}i) \\
+	     =& \Theta(\sum\limits_{i=1}^{lg\lceil (n+1) \rceil-1}i) \\
+	     =& \Theta({lg\lceil (n+1) \rceil}{lg\lceil (n+1) \rceil-1}/2) \\
+		 =& \Theta({lg\lceil (n+1) \rceil}^{2}) \\
+		 =& \Theta(lg^{2}(n)) \\
+  \end{split}
+  \label{equ:bs}
+\end{eqnarray}
+
+The worst case searching time will be $\Theta(lg^{2}(n))$.
+
+\subsection*{b.}
+Then we consider the process of insert, we can do the insert as following:
+
+For the reason we must ensure the property of these array groups that a certain group is either full or empty, when inserting a element into group $A_{i}$, all the array group $A_{0},A_{1},\cdots A_{i-1}$ should be full, otherwise, we cannot hold the property. Because the number of all the elements in $A_{0},A_{1},\cdots A_{i-1}$ plussing the new element cannot fulfill $A_{i}$.  
+
+Then this insert process is just like a binary increment counter, every array represents the corresponding binary bit. 
+
+At first we build a new array with only the new element, then we check whether the $A_{0}$ is full, if it is, we just put the new element in $A_{0}$, otherwise, we copy the elements in $A_{0}$ and insert them to our new array. 
+
+Sort our array.
+
+Then we continue check $A_{1}$, if $A_{1}$ is empty, we just put our array into it, this time our array contains 2 elements and is suitable for $A_{1}$. If $A_{1}$ is full, we just copy all the elements in $A_{1}$ and insert them to our new array.  
+
+Sort our array.
+
+Continue above steps until we find a empty $A_{i}$, if this array doesn't exist, it means our all the arrays are full, then the insert cannot be successful, and \textbf{this is just the worst case.} 
+
+Otherwise, when we have find a empty $A_{i}$, the total number of elements in our new array will be $\sum\limits_{j=0}^{i-1}2^{j}+1 = 2^{i}$, and our new array just fulfill the $A_{i}$. 
+
+At last we should mark all the array from $A_{0}$ to $A_{i-1}$ to be empty, instead of clear all the elements, we can just use a flag array to indicate its empty of full. Then this step only cost O(1).
+
+The main cost of our insert process is merging our array with current $A_{i}$ keeping the final new array sorted.
+
+One way is to sort the new array every time it is combined with a $A_{i}$, notice that $A_{i}$ is sorted, then we can just compare each element sequentially to get a sorted new array, the total cost will be $2*2^{i}$, then in the worst case ,we have:
+
+\begin{eqnarray}
+  \begin{split}
+	T(n) =& 2\sum\limits_{i=1}^{lg\lceil (n+1) \rceil-2}(2^{i}) \\
+		 =& 2\sum\limits_{i=1}^{lg\lceil (n+1) \rceil-2}(2^{i}) \\
+		 =& 2(2^{lg\lceil (n+1) \rceil-1}-1) \\
+		 =& \Theta(n) \\
+  \end{split}
+  \label{equ:is}
+\end{eqnarray}
+
+Then we use amortized analysis.
+
+Consider n inserts operation with a all empty $lg\lceil (n+1) \rceil$ (denoting as k for concise) groups.
+
+Every inset operation can be divided into two sub process, inserting new element to a new array and merging new array with $A_{i}$. 
+
+We charge each insert operation \$ k, 1 for the insert into our new array, and save \$ k-1 for later merge operations causing by this operation or other insert operations. 
+
+Notice that when merging, the element in $A_{i}$ will be moved into a higher-order array, and cost \$ 1 in every merging.   
+
+When it arrives at $A_{k-1}$, it will never be moved no matter how many insert operations remain. 
+
+Thus for any element, the total actual cost caused by all the merging operations won't exceed \$k.
+
+And our total amortized credit won't be negative during the n insert operations. 
+
+As a result, k = $\Theta(lgn)$, we have a amortized cost of insert operation as $\Theta(lgn)$.
+
+\subsection* {c.}
+As for deletion, we must find the target element firstly, then we apply search operation to our array, and the cost will be $O(lg^{2}n)$, if we do not find the target value, we can just end the delete operation, otherwise, we denote it as $x_{i}$ and in the $A_{i}$.
+
+Then we search for the first full array in $A_{0},A_{1},\cdots,A_{i}$ sequentially, this search process cost $O(lgn)$. 
+
+If the first full array is just $A_{i}$, we simply place elements in $A_{i}$ other than $x_{i}$ to $A_{0},A_{1},\cdots,A_{i-1}$ sequentially,because $A_{i}$ is sorted, then every continuous subarray of $A_{i}$ is sorted, then the new $A_{0},A_{1},\cdots,A_{i-1}$ will also be sorted.
+
+Then we set indicator of $A_{i}$ to be empty and $A_{0},A_{1},\cdots,A_{i-1}$ to be full. 
+
+The total cost will be $\Theta(2^{i})$.
+
+Otherwise,assume that the first full array we find in $A_{0},A_{1},\cdots,A_{i}$ is $A_{j}$, denote $x_{j}$ as the first element in $A_{j}$, we swap $x_{i}$ with $x_{j}$, because the rest part of $A_{i}$ is still sorted, then we can place $x_{j}$ to a proper place to make the array still sorted in $\Theta(2^{i})$. 
+
+Then we simply place place elements in $A_{j}$ other than $x_{i}$ to $A_{0},A_{1},\cdots,A_{j-1}$ sequentially,because $A_{j}[0\cdots 2^{j}]$ is sorted, then every continuous subarray of $A_{j}[0\cdots 2^{j}]$ is sorted, then the new $A_{0},A_{1},\cdots,A_{j-1}$ will also be sorted.
+
+Then we set indicator of $A_{j}$ to be empty and $A_{0},A_{1},\cdots,A_{j-1}$ to be full. 
+
+The total cost will be $\Theta(2^{j}+2^{i})$.
+
+Then the worst case will be i = k-1 and j = k-2, the search cost $\Theta(lg^{2}n)$ to find $x_{i}$, $\Theta(lgn)$ to find $x_{j}$, $\Theta(2^{i})$ to place $x_{j}$ in the proper place of $A_{i}$, and $\Theta(2^{j}) $ to divide $A_{j}$ into sub-arrays.
+
+Then the worst case time complexity will be $\Theta(2^{k-1}) = \Theta(n)$.
+
+As for the worst case time complexity by amortized analysis, the answer won't be better:
+Consider the following sequence of 3n/2 operations, n is just the power of 2.
+
+At first we do n/2 INSERT operations, this will make a single full array and the total amortized  cost will be $O(nlgn)$. 
+
+Then we do n/2 pairs of DELETE and INSERT. 
+
+Then the later DELETE operation will divide the whole array into continuous subarrays, and cost $\Theta(n)$, the following INSERT operation will repeatedly combine the new element with remaining subarrays to form a new single full array and cost $\Theta(n)$, then the remaining n operations will cost $\Theta(n^2)$,then $\Theta(n)$ for each operation, then even amortized analysis won't give a better time complexity than $\Theta(n)$.
+
+
+
+
+\end{document}

@@ -1,0 +1,59 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{epsfig}
+\setlength{\parindent}{0cm}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{6}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{2}
+\begin{document}
+\maketitle
+\newpage
+\section{Exercise 24.3-5}
+The professor ignores the extreme case that there may be multiple shortest paths to a certain vertex with different edges. 
+
+When different shortest paths share some edges, then the edge first relaxed within some shortest path will be out of order in other shortest paths. 
+
+Just take a look at Figure \ref{fig:ce1}, in this graph, all the edges have the same weight 0, and there are two shortest paths from s to z with same weight but different length, one is (s,x,y,z) and the other is (s,y,z), they share the edge (y,z), then in Dijkstra's algorithm, y will be firstly added to the set S for y.d = 0 is the minimum, then (y,z) will be relaxed as element in path (s,y,z), but for (s,x,y,z), (y,z) will be relaxed before (x,y), that is out of order.
+\begin{figure}[!h]
+  \centering
+  \epsfig{figure=./2435.eps,scale = 1}
+  \caption{Counter Example}
+  \label{fig:ce1}
+\end{figure}
+
+\section{Exercise 24.3-8}
+Firstly we notice that all the edges' weights range from 0 to W and we define the vertex set $V_{a}$, $v \in V_{a}$ when $v.d \neq +\infty$ and $ v \notin S $, then during the execution of the Dijkstra's algorithm, for any vertex $v_{i} \in V_{a}$, $v_{i}.d \leq (|V|-1)W$.
+
+Then we just use a link list array L$[0 \cdots (|V|-1)W]$ to record any vertex in $V_{a}$,and those vertices cannot be reached temporally are stored in a separate link list. We store every vertex with its d equal to j in the L[j] which is a link list, and we build this link list with a circular double link list with sentinel, then we can implement the insert operation and delete operation in O(1) time, and notice that when a certain vertex changes its d attribute, we need delete it from original link-list an insert it to the new link\_list, and each operation cost O(1).
+
+If we use i\_min to indicate the smallest non-empty element in L with initial value 0, and from Dijkstra's algorithm, we always extract the smallest element in $V_{a}$, and the relax operation can only decrease the target vertex d value to no smaller than i\_min.d,then i\_min will be non-decreasing during the execution algorithm.
+
+Then the algorithm is presented below in the frame of Dijkstra.
+
+0.Insert.\\
+All the vertices other than source is original with d = $+\infty$, and during the execution of the algorithm, we may insert all of them in the L, then the cost of this part is also $O(|V|)$
+
+1.Extract-Min:\\
+Starting from i\_min which is just 0 after initialization, we check whether L[i\_min] is empty, if it is, then we just set i\_min = i\_min +1, and re-do the check again until we find the first element in L which is non-empty, otherwise, it means there is no available vertices can be reached from the source. If L[i\_min] is not null, then we take out the first element in the link\_list, the delete operation will cost only O(1).
+
+During the modified-Dijkstra's algorithm, in all the operations of Extract-Min, we just need to traverse the array L, never going back,and for each vertex we only take out them once in Extract-Min operation then the total cost is no more than $O(|V|W)$
+
+2.Decrease-key:\\
+Decrease-Key operation at most occurs $|E|$ times for each edge need to be relaxed during the execution of the algorithm, and for each operation of Decrease-Key operation, we just need to extract the vertex from the original link-list and insert it to the new link-list(if it is in the L, otherwise we just insert it to the L), the total cost is O(1), and don't forget to present that new index is smaller than the original one, otherwise it is wrong.
+Then the total cost of all the operation of Decrease-key is $O(|E|)$.
+
+
+Then the total cost is $O(|V|W + |E| + |V|) = O(|V|W + |E|)$.
+
+
+\end{document}

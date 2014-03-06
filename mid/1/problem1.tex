@@ -1,0 +1,220 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{url}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{4}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{1}
+\begin{document}
+\maketitle
+\newpage
+
+\section*{Problem 1.}
+Let $b_{i}$ denote the $i$th bikestand in the map.
+
+This problem can be treated as a two-layer shortest path problem. 
+
+The first stage we need to calculate all the shortest \textbf{distance} between two bikestands in the map. The result D'(i,j) means the shortest distance used to calculate the cost if we start from $b_{i}$ to $b_{j}$ without returning bike to other bikestand along the way and let \textbf{PathD(i,j)} be the path. 
+
+The second stage we just calculate the shortest cost-distance between $b_{s}$ to $b_{t}$ and let \textbf{Path(i,j)} be the path.Notice the fact that in this stage, it means in every bikestand we pass, we will return the bike and get the new food,and the decision for each edge is independent, thus \textbf{we can individually choose local optimum based on three nutrition options as the cost distance of the edge}.
+
+For there won't be any negative edge in the map, in the first stage we can use Floyd Algorithm\footnotemark[1]to calculate the D' Matrix and record the path for every D'(i,j), and for the second stage we can just use Dijkstra Algorithm\footnotemark[2]. 
+
+To simplify the proof, we won't give detail information about these two graph algorithms,the optimal substructure and correctness of these two classical algorithms have been used for many years and you can refer to the corresponding chapter of textbook in the footnotes.
+\footnotetext[1]{\url{Introduction to Algorithms 3rd Edition Chap 25.2 }}
+\footnotetext[2]{\url{Introduction to Algorithms 3rd Edition Chap 24.3 }}
+
+Then I'll prove the correctness of my algorithm.
+
+Let $S_{op}$ be the optimum for the problem, $S_{op} = \{s_{s},s_{i},n_{j},s_{k}, \cdots ,s_{t} \}$, $Cost_{op}(i,j,path)$ denotes the optimum cost from $b_{i}$ to $b_{j}$ along the path without stop.  
+
+Then the total cost will be:
+
+ $Cost_{op} = \sum_{s_{i},s_{j} \in S_{op} s_{i}s_{j}~are~neighbor ~ index(s_{i}) < index(s_{j}) }Cost_{op}(i,j,PathD_{op}(i,j))$.
+
+$s_{i}$ means we will return and take a new bike at bikestand $b_{i}$, $n_{j}$ means that we just pass the bikestand $b_{j}$.
+
+In the first stage, we shrink the solution space, we need to prove that at least global optimum won't be excluded(May path with same value as the optimum be excluded). 
+
+That is, if between two neighbor $s_{i}$ and $s_{k}$ in $S_{op}$, the mediate path of non-stop bikestand $n_{j}  \cdots n_{l} $ (that is $PathD_{op}(i,k)$) must be equal to the result of PathD(i,k). The proof is simple, By Floyd algorithm, PathD(i,k) is the shortest distance between i,k, thus $Cost_{op}(i,j,PathD_{op}(i,k)) \geq Cost_{op}(i,j,PathD(i,k))$, because the cost of traveling more distance without stop must be no smaller than traveling less distance without stop. At least we can say that if we replace the orginial $PathD_{op}(i,k)$ with the result we calculate in the first stage($PathD(i,k)$), the new total cost $Cost_{new}$ won't be larger than $Cost_{op}$,that is, we can replace $S_{op}$ with our new $S_{new}$ without loss of the property of optimum. Otherwise our original $S_{op}$ won't be optimum, that contradicts with our assumption.
+
+So far, we have proved that if there is any non-stop sequence in $S_{op}$ we can always replace it with our PathD from Floyd algorithm. Thus the shrink is safe. 
+
+At the second stage, we just need to prove that we can treat optimum cost as distance, because the Dijkstra algorithm will find the shortest cost path for us. 
+
+In the second stage, what we pick as next station is the bikestand where we will stop and change a bike. Because every such an $s_{i}$ we need to change our nutrition and the distance between two $s_{i}$ and $s_{j}$ is only determined by D'(i,j) we calculated in the first stage, thus we can only make the local optimum by just checking the cost of travel over D'(i,j) distance. 
+
+Note that D'(i,j) is fixed, the result of $Cost_{op}(i,j,PathD_{op}(i,j))$ is also fixed, we just check the distance, and take the best nutrition option. Thus we can transfer our optimum cost to be the distance of a graph.
+
+At this point, we have finished the proof. 
+
+As for the time complexity, the Floyd algorithm is $O(n^{3})$,for there one three layer-loop in the algorithm, and because the graph we have it is a complete graph, we use matrix to represent it.The total cost of Dijkstra algorithm as well as the sequence output is $O(n^{2})$,because there is a two-layer loop(while-for),the while sentence runs at most n times,and each while run inside loop n times and cost of each inside loop is just O(1).  So the total cost of the whole problem is $O(n^{3})$.
+
+The pseudo-code is below:
+
+\begin{algorithm}[h]
+  \caption{Cost-Time}
+  \label{algo:costtime}
+  \begin{algorithmic}[1]
+	\REQUIRE d,r
+	\ENSURE ~ ~\\ 
+	\STATE {$time = d/r$}
+	\STATE {$cost = \infty$}
+	\IF{$time \leq \frac{3}{4} $}
+	  \STATE { $cost = 0$}
+	\ELSIF{$time \leq 1 $}
+	  \STATE { $cost = 5$}
+	\ELSIF{$time \leq 2 $}
+	  \STATE { $cost = 10$}
+	\ENDIF
+	\LASTCON $cost$
+  \end{algorithmic}
+\end{algorithm} 
+
+\begin{algorithm}[h]
+  \caption{Cost}
+  \label{algo:cost}
+  \begin{algorithmic}[1]
+	\REQUIRE d
+	\ENSURE ~ ~\\ 
+	\IF {d == 0}
+	  \STATE {cost = 0}
+	\ENDIF
+	\STATE {cost = 1 + Cost-Time(d,3)}
+	\STATE {cost2 = 2 + Cost-Time(d,5)}
+	\IF{$cost2 < cost $}
+	  \STATE { $cost = cost2$}
+	\ENDIF
+	\STATE {cost2 = 3 + Cost-Time(d,10)}
+	\IF{$cost2 < cost $}
+	  \STATE { $cost = cost2$}
+	\ENDIF
+	\LASTCON $cost$
+  \end{algorithmic}
+\end{algorithm} 
+
+\begin{algorithm}[h]
+  \caption{Floyd-Algorithm}
+  \label{algo:floyd}
+  \begin{algorithmic}[1]
+	\REQUIRE D
+	\ENSURE ~ ~\\ 
+	\STATE {let $D' = D$, PathD be the array$[1 \cdots n][1 \cdots n]$ and all the elments are -1}
+	\FOR {k = 1 to n}
+	  \FOR {i = 1 to n}
+		\FOR {j = 1 to n}
+		  \IF {$D'[i,k] + D'[k,j] < D'[i,j]$}
+			\STATE {$ D'[i,j] = D'[i,k] + D'[k,j] $}
+			\STATE {$PathD[i,j] = k$}
+		  \ENDIF 
+		\ENDFOR
+	  \ENDFOR
+	\ENDFOR
+	\LASTCON $D',PathD$
+  \end{algorithmic}
+\end{algorithm} 
+
+\begin{algorithm}[h]
+  \caption{FloydPath-Output}
+  \label{algo:output}
+  \begin{algorithmic}[1]
+	\REQUIRE i,j,PathD
+	\ENSURE ~ ~\\ 
+	\STATE {location = j}
+	\WHILE {$PathD[i,location] \neq -1$}
+	  \STATE {Print $PathD[i,location]$}
+	  \STATE {$location = PathD[i,location]$}
+	\ENDWHILE
+	\LASTCON $D',PathD$
+  \end{algorithmic}
+\end{algorithm} 
+
+\begin{algorithm}[h]
+  \caption{Dijkstra-Algorithm}
+  \label{algo:dijkstra}
+  \begin{algorithmic}[1]
+	\REQUIRE s,t,D'
+	\ENSURE ~ ~\\ 
+	\STATE {let Path be the array$[1 \cdots n]$ and all the elments are -1}
+	\STATE {let CostDistance be the array$[1 \cdots n]$ and all the elments are $\infty$}
+	\STATE {let $V = \emptyset$}
+	\FOR {i = 1 to n}
+	  \STATE {$ temp = Cost(s,i,D'[s,i]) $}
+	  \IF {$temp < CostDistance[i]$}
+		\STATE {$ CostDistance[i] = temp $}
+		\IF {$i \neq s$}
+		  \STATE {$Path[i] = s$}
+		  \STATE {Insert the i into  V}
+		\ENDIF
+	  \ENDIF 
+	\ENDFOR
+	\WHILE {$V \neq \emptyset$}
+	  \STATE {let \textbf{new} be the element in V with least value of CostDistance, and POP(new)}
+	  \IF { $CostDistance[new] = = \infty$ }
+		\STATE {let Path be the array$[1 \cdots n]$ and all the elments are -1}
+		\STATE {$tcost = \infty$}
+		\STATE {RETURN}
+	  \ELSIF {$new = = t$}
+		\STATE {$tcost = CostDistance[new]$}
+		\STATE {RETURN}
+	  \ENDIF
+	  \FOR {every element next in the V}
+		\STATE {$temp = Cost(new,next,D'[m,next])$ }
+		\IF{$CostDistance[new] + temp < CostDistance[next] $}
+		  \STATE {$CostDistance[next] = temp + CostDistance[new]$ }
+		  \STATE {$Path[next] = new$ }
+		\ENDIF
+	  \ENDFOR
+	\ENDWHILE
+	\LASTCON $tcost,Path$
+  \end{algorithmic}
+\end{algorithm} 
+
+\begin{algorithm}[h]
+  \caption{Dijkstra-Output}
+  \label{algo:dijkstraoutput}
+  \begin{algorithmic}[1]
+	\REQUIRE s,t,Path,PathD
+	\ENSURE ~ ~\\ 
+	\STATE {$location = t$}
+	\WHILE {$Path[t] \neq -1$}
+	  \STATE {$FLAG = 1$}
+	  \STATE {Print t}
+	  \STATE {FloydPath-Output(Path[t],t,PathD)}
+	\ENDWHILE
+	\IF{$FLAG == 1$}
+	  \STATE {Print s}
+	\ENDIF
+	\LASTCON 
+  \end{algorithmic}
+\end{algorithm} 
+
+\begin{algorithm}[h]
+  \caption{Two-Layer}
+  \label{algo:two-layer}
+  \begin{algorithmic}[1]
+	\REQUIRE s,t,D
+	\ENSURE ~ ~\\ 
+	\STATE {$totalcost = 0$}
+	\IF{$s == t$}
+	  \STATE {RETURN}
+	\ELSE
+	\STATE {[D',PathD] =  Floyd-Algorithm(D)}
+	\STATE {[tcost,Path] = Dijkstra-Algorithm(s,t,D')}
+	\STATE {totalcost = tcost}
+	\STATE {Dijkstra-Output(s,t,Path,PathD)}
+	\ENDIF
+	\LASTCON totalcost
+  \end{algorithmic}
+\end{algorithm} 
+
+\end{document}

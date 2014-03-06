@@ -1,0 +1,57 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{fancybox}
+\usepackage{tikz}
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{epsfig}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{5}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{6}
+\begin{document}
+\maketitle
+\newpage
+\section {Exercise 23.1-4}
+
+When we discuss Minimum Spanning Tree, the prerequisite is that there is no cycle in the edge set, otherwise it won't be a tree. Thus if there are multiple light edges crossing a cut (S,V-S), can only be one light edge selected in to the Minimum Spanning Tree, otherwise there may be cycle.(It is also possible that multiple light edges are selected as long as they are regarded as different cut's light edge)
+
+Thus a simple counter example is a triangle with all its edges of same weight. At first this is a connected graph ,and all edges are light edge of some cut. But obviously the set of the three edges forming a cycle, then it is not a minimum spanning tree.
+\begin{figure}[h]
+  \centering
+  \epsfig{figure=./counterexample_2314.eps,scale=1}
+  \caption{Counter Example}
+  \label{fig:ce1}
+\end{figure}
+
+
+\section {Exercise 23.1-6}
+At first we say that for graph G, every cut of G, there is a unique light edge crossing the cut. We say T and T' are two different minimum spanning tree, then we prove that there are equal.
+
+W.L.O.G, we assume that $(\mathit{i},\mathit{j})$ is in T, and it is just the light edge of the cut (S,V-S), such a cut must exist, otherwise we must be able to find a cut separate $\mathit{i}$ and $\mathit{j}$ that replacing  $(\mathit{i},\mathit{j})$ with the light edge of (S,V-S) will make a T' ' whose weight is smaller than T, then T won't be minimum spanning tree.
+
+Then we find the same cut (S,V-S) in T', the edge crossing (S,V-S) must be the light edge of the cut, since the light edge of every cut is unique, then it must be $(\mathit{i},\mathit{j})$.
+
+Similarly, for every edge in T, we check its cut and look for the edge of same cut in T', we'll find that they are the same, then T = T'.
+
+On the other hand, the following counter example shows that the converse isn't right. 
+
+Consider the graph in Figure \ref{fig:ce2}, it is obvious that there is only one unique minimum spanning tree containing all the edges in the graph.  
+
+For ($\{ \mathit{u} \},\{ \mathit{v} ,\mathit{w}\}$), we note that there are two light edge with the same weight $w_{0}$, thus the converse is not right.
+
+\begin{figure}[h]
+  \centering
+  \epsfig{figure=./counterexample_2316_1.eps,scale = 1}
+  \caption{Counter Example 2}
+  \label{fig:ce2}
+\end{figure}
+
+\end{document}

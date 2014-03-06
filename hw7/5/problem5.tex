@@ -1,0 +1,44 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{subfigure}
+\usepackage{epsfig}
+\setlength{\parindent}{0cm}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{7}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{5}
+\begin{document}
+\maketitle
+\newpage
+\section {Problem 35.1-5} 
+No, the relationship between Vertex-cover and Clique cannot ensure that there is a constant ratio approximation for the MAX-CLIQUE problem. \\
+Recall the relationship, if for certain $G=(V,E)$, we have a size-k clique, then we can ensure that in the graph G'(which is the complement of G), there will be a size $|V|-k$ vertex cover, then we just construct the following approximation algorithm based on this relationship.\\
+0. Given a certain $G=(V,E)$ \\
+1. Construct the complement of G and name it G'.\\
+2. Given G' as input, we run APPRO-VERTEX-COVER algorithm, it will return the answer C. \\
+3. Return V-C (C is a vertex cover in G', then V-C is a clique in G, for there must be no edge between any two elements in V-C in G', otherwise C won't be a vertex cover )\\
+
+
+We use $C_{*}$ to denote the optimal solution for MIN-VERTEX-COVER(G'), then from the textbook, we know the approximation ratio is 2, that is : 
+$$|C_{*}| \leq |C| \leq 2|C_{*}|$$
+What's more, MAX-CLIQUE is a maximization problem, then we should consider the approximation ratio as $\frac{|V|-|C_{*}|}{|V|-|C|}$, and use the approximation ratio in APPRO-VERTEX-COVER, we have:
+\begin{eqnarray*}
+  \begin{split}
+	\frac{|V|-|C_{*}|}{|V|-|C|} \leq & \frac{|V|-|C_{*}|}{|V|-|2C_{*}|} \\
+	 = & 1 + \frac{C_{*}}{|V|-|2C_{*}|} \\
+  \end{split}
+\end{eqnarray*}
+And from the formula above, we could see that the approximation ratio isn't a constant but a function with regard to $|V|$ and the size of optimal vertex cover $|C_{*}|$. \\
+Then the conclusion isn't right.
+
+\end{document}

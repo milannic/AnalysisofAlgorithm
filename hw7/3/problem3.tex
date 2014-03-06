@@ -1,0 +1,46 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multicol}
+\usepackage{epsfig}
+\setlength{\parindent}{0cm}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{7}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{3}
+\begin{document}
+\maketitle
+\newpage
+\section*{Problem 34.5-2}
+0. 0-1 integer programming is decision problem.\\
+1. Prove 0-1 integer programming is NP. \\
+Given an integer $m\times n$ matrix A,an integer m-vector $b$, and an integer n-vector $x$ with elements in the set {0,1}, then we can check every row in A multiply x to see if the result is no larger than the corresponding element in m-vector $b$, and for every row, there will be n multiply operations and the total cost will be O(n), and there will be m rows so the total cost will be O(mn) is polynomial to the input size, then we can verify in polynomial time whether $Ax\leq b$, then 0-1 integer program is in NP.\\
+2. Then we prove that 0-1 integer programming is NP-hard by reducing 3-CNF-SAT to it, that is 3-CNF-SAT $\leq_{p}$ 0-1 INTEGER-PROGRAMMING.\\
+We do the following to transfer a certain 3-CNF-SAT.\\ 
+Assume that we have n boolean variables from $x_{1}$ to $x_{n}$, and m boolean clauses from $C_{1}$ to $C_{m}$, we treat $x_{i}$ as the variables vector in 0-1 Integer programming . \\For each $C_{i}$, we transfer it to a inequality $\sum_{j}s_{ij} \geq 1$, for each $x_{j}$, if $x_{j} \in C_{i}$, then in the inequality,$s_{ij} = x_{j}$, else if $\neg x_{j} \in C_{i}$, then in the inequality,$s_{ij} = (1-x_{j})$,else, $s_{ij} = 0x_{j}$. 
+\\ After this, we move all the constant in the left side to the right side and transfer the inequality to $\sum_{i}a_{ij}x_{j} \leq b_{i}$. And we know $x_{i}$ is boolean variable and $x_{i} \in \{0,1\}$ \\
+
+After finishing all the transfer for each clause, we take all the $a_{ij}$ to construct a A matrix and $b_{i}$ to construct a b vector, then we have get a new 0-1 integer programming problem $Ax \leq b$.\\
+
+At first we prove the translation is polynomial time: \\
+
+The translation for each clause is O(n) and the total clause is m, then we can do the translation in O(mn), then we can finish it in polynomial time. \\
+
+At last we prove the correctness. \\
+
+If we have a satisfiable assignment for a 3-CNF-SAT, we say the assignment is just a solution to the corresponding 0-1 integer programming. \\ In every clause there must at least one literal is $1$, then if we sum up the three literals, the answer will be no smaller than one, and we map the $\neg x_{j}$ to $1-x_{j}$, and add else zero coefficient term to get the $\sum_{j}s_{ij} \geq 1$, the correctness holds, as well as $\sum_{i}a_{ij}x_{j} \leq b_{i}$. That is, for a certain assignment, if a certain clause is satisfied, the corresponding $\sum_{i}a_{ij}x_{j} \leq b_{i}$ is satisfied, then if we have a satisfiable assignment, all the inequality will also be satisfied.
+
+If we have such a solution for the programming, then we say the x is just the right assignment to the corresponding satisfiable 3-CNF-SAT.Every element in vector $x$ has its unique value, then such a vector can be regarded as a assignment, and each $A_{i}x \leq b_{i}$ is translated from a clause, if $A_{i}x \leq b_{i}$, we re-map the inequality to the form of clause,then at least one literal is 1, then the clause is satisfied.
+
+So far we have proved that 0-1 Integer programing is NP-hard.
+
+Then 0-1 Integer programming is NP-Complete.
+
+\end{document}

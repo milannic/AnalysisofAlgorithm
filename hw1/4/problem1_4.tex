@@ -1,0 +1,50 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{1}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{4}
+\begin{document}
+\maketitle
+\newpage
+\section{Exercises 3-4}
+\subsection*{b.$f_{n}+g_{n}=\Theta(min(f_{n},g_{n}))$}
+This equaltion is false.\\ 
+Let's assume its correctness, then there must exsit $c_{0}$ and $n_{0}$ when $n\geq n_{0}$ making the below inequalty true:$$f_{n}+g_{n}\leq c_{0}(min(f_{n},g_{n})) \eqno(1)$$ \\ 
+It is easy to find a counter-examples. When $f_{n} = n$ and $g_{n}=1$, for suffient big n, $min(f_{n},g_{n}) = f_{n} = n $.
+On this condition, (1) will be:
+$$n+1 \leq c_{0} \eqno(2) $$
+It is impossible to take a constant $c_{0}$ which is great than any n.
+
+\subsection*{d.$f(n)=O(g_{n})$ implies $2^{f(n)}=O(2^{g(n)})$}
+This equaltion is false.\\ 
+This question can also be solved by disproving. The problem lies in $2^x$ is a expotional function. 
+When $f(n) = 2n$ and $g(n)=n$, it is obviously that $f(n)=O(g(n))$, for example ,$c=3$.
+But as for $2^{2n} = 4^{n}$ and $2^{n}$ if $2^{f(n)}=O(2^{g(n)})$ then we need to find a $c_{1}$ and $n_{1}$ to make the formula (3) true for any $n \geq n_{1}$ $$4^n \leq c_{1}2^n \eqno(3)$$ That is: $$2^n \leq c_{1} \eqno(4)$$
+\\ That is impossible.
+
+
+\subsection*{e.$f(n)=O((f(n))^2)$}
+This equaltion is false.\\ 
+This question can also be solved by disproving. 
+When $f(n) = 1/n$ and $f(n)^2=1/n^2$,  if $f(n)=O((f(n))^2)$ then we need to find a $c_{0}$ and $n_{0}$ to make the formula (5) true for any $n \geq n_{0}$ $$1/n \leq c_{0}/n^2 \eqno(5)$$ That is: $$n \leq c_{0} \eqno(6)$$
+\\ That is impossible.
+
+\subsection*{g.$f(n)=\Theta(f(n/2))$}
+This equaltion is false.\\ 
+This question can also be solved by disproving. The problem lies in $2^x$ is a expotional function. 
+When $f(n) = 2^n$ and $f(n/2)=2^{n/2}=(\sqrt{2})^n$,  if $f(n)=\Theta(f(n/2))$ then at first we need to find a $c_{0}$ and $n_{0}$ to make the formula (6) true for any $n \geq n_{0}$ $$ 2^n \leq c_{0}(\sqrt{2})^n \eqno(6)$$ That is: $$(\sqrt{2})^n  \leq c_{0} \eqno(7)$$
+\\ That is impossible.
+
+
+
+\end{document}

@@ -1,0 +1,65 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{epsfig}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{5}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{4}
+\begin{document}
+\maketitle
+\newpage
+\section{Exercise 22.3-5}
+\subsection*{a.}
+\textbf{1}. If ($\mathit{u},\mathit{v}$) is a tree edge or a forward edge, then $\mathit{v}$ must be a descendant of $\mathit{u}$ in the depth-first forest, thus from corollary 22.8, then 
+($\mathit{u},\mathit{v}$) is a tree edge or forward edge if and only if $\mathit{u}.d < \mathit{v}.d <\mathit{v}.f < \mathit{u}.f$.
+
+\noindent \textbf{2}. 
+
+a. If ($\mathit{u},\mathit{v}$) is a back edge, if ($\mathit{u},\mathit{v}$) is a self loop, then it is obvious $\mathit{v}.d = \mathit{u}.d <\mathit{u}.f = \mathit{u}.f$. If not there must be another path from ($\mathit{v}$) to ($\mathit{v}$) in the depth-first forest, then  $\mathit{u}$ must be a descendant of $\mathit{v}$ in the depth-first forest, thus from corollary 22.8, then $\mathit{v}.d \leq \mathit{u}.d <\mathit{u}.f \leq \mathit{u}.f$.
+\\
+
+b.If $\mathit{v}.d \leq \mathit{u}.d <\mathit{u}.f \leq \mathit{u}.f$, if $u,v$ are the same vertex, thus a  self-loop is defined as a back edge, otherwise $\mathit{v}.d < \mathit{u}.d <\mathit{u}.f < \mathit{u}.f$, the interval [$\mathit{u}.d,\mathit{u}.f$] is contained by [$\mathit{v}.d,\mathit{v}.f$], thus u is a descendant of $\mathit{v}$ in a DF tree, thus ($\mathit{u},\mathit{v}$) is a back edge.
+
+
+\noindent \textbf{3}. 
+
+a. If ($\mathit{u},\mathit{v}$) is a cross edge,neither$\mathit{u}$ or $\mathit{v}$ is a descendant of the other in the depth-first forest, then their interval must be disjoint according to parenthesis theorem. And if ($\mathit{u},\mathit{v}$) exist, then the interval must be $\mathit{v}.d < \mathit{v}.f <\mathit{u}.d < \mathit{u}.f$. Otherwise, if $\mathit{u}.d < \mathit{v}.d$, then when discovering $\mathit{u}$, the $\mathit{v}$ is not discovered, and there is ($\mathit{u},\mathit{v}$), according to white-path theorem, v is a descendant of f, then ($\mathit{u},\mathit{v}$) won't be a cross edge.
+\\
+
+b.If $\mathit{v}.d < \mathit{v}.f <\mathit{u}.d < \mathit{u}.f$, according to parenthesis theorem,neither$\mathit{u}$ or $\mathit{v}$ is a descendant of the other in the depth-first forest.Then if there is edge between $\mathit{u}$ and $\mathit{v}$, it must be cross edge.
+
+\section{Exercise 22.3-11}
+The counter example is quite simple, if there is not out coming edge of $\mathit{u}$ , we start DFS from $\mathit{u}$ will result in a single point DF tree. Now there is out coming edge, we can first start DFS from those ' out coming ' vertex and make sure there is not edge from that set to $\mathit{u}$, the Figure \ref{fig:ce1} show a simple example.
+
+\begin{figure}[h]
+  \centering
+  \epsfig{figure=counterexample_22311_1.eps, scale = 1}
+  \caption{Counter Example}
+  \label{fig:ce1}
+\end{figure}
+
+Note that $\mathit{u}$ have both incoming edge and out coming edge. 
+
+We start DFS from $\mathit{v}$, because it has no out coming edge, then it will result in a single point DF tree, then we in the order start DFS from $\mathit{u}$.
+\begin{center}
+  \begin{tabular}[h]{c|c|c|}
+	& d & f  \\
+	\hline
+	v & 1 & 2  \\
+	\hline
+	u & 3 & 4  \\
+	\hline
+	w & 5 & 6  \\
+  \end{tabular}
+\end{center}
+
+\end{document}

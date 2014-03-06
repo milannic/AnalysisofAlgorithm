@@ -1,0 +1,126 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{url}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{4}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{3}
+\begin{document}
+\maketitle
+\newpage
+
+\section*{Problem 3.}
+\subsection*{a.}
+For the deterministic algorithm, as efficient as possible, we use Hash Table\footnotemark[3] to record the every elment, in reality, the average time to search for an element in a hash table is O(1) even the worst case is $\Theta(n)$. For this problem, we just take the size of hash table as the smallest prime larger than n and for there is no delete operation in Hash,we can use open-address hasing. 
+
+And because we must at least scan $\lceil n/4 \rceil$ of the array and the Hash table takes up O(n) space, thus the time complexity and space complexity is both O(n).
+And counter array and red-black tree are also possible choice, while counter array may take up a lot of space for we don't know the range of integer in the array A,and red-black tree can bound the time complexity to O(nlgn),but seldom will the hash table encounter the worst case.
+
+\footnotetext[3]{\url{Introduction to Algorithms 3rd Edition Chap 11 }}
+
+The pseudo-code is below,this is only one loop in the algorithm and each one consumes O(1) time for the advantage of Hash Table,thus the total time complexity is O(n):
+
+\begin{algorithm}[h]
+  \caption{FrequentValue}
+  \label{algo:fv}
+  \begin{algorithmic}[1]
+	\REQUIRE A,n
+	\ENSURE ~ ~\\ 
+	\STATE {create the hash table and make all the elements in hash table is 0}
+	\FOR {$i = 1$ to n}
+	  \STATE{$Hash(A[i]) = Hash(A[i]) +1$}
+	  \IF {$Hash(A[i]) \geq \lceil \frac{n}{4} \rceil $}
+	  \STATE {RETURN A[i]}
+	  \ENDIF
+	\ENDFOR
+	\STATE {RETURN 0}
+  \end{algorithmic}
+\end{algorithm} 
+
+\subsection*{b.}
+
+It is easy to know that the worse case is that we never find the frequent value, thus we will keep on looping forever,the algorithm will never end .
+
+In this situation,no matter how we implement the algorithm, the running time will be $\Theta(\infty)$
+
+\subsection*{c.}
+As for the requirement of the problem, it doesn't have any requirement of efficiency. We assume that random function cost O(1), in every loop we can scan the whole array to calculate the x.Because we don't know the real possibility distribution of element in array A, we can only find the expectation upper bound. that is, there is only one frequent value appearing just $\lceil \frac{n}{4} \rceil$. 
+
+It is easy to know if there is more frequent value and frequent value appearing more times, we will find them quickly. Let X be the random variableindicating the running time of the algorithm.
+If in every loop we scan the whole array to find the frequent value, thus the cost of each loop is O(n), then we have:
+
+\begin{eqnarray}
+  \begin{split}
+	E[X] &=  \sum_{i=1}^{\infty}\frac{\lceil \frac{n}{4} \rceil}{n} (1- \frac{\lceil \frac{n}{4} \rceil}{n})^{i-1}in \\
+	E[X] &= \frac{\lceil \frac{n}{4} \rceil}{n} \sum_{i=1}^{\infty} (1- \frac{\lceil \frac{n}{4} \rceil}{n})^{i-1}in \\
+	(1- \frac{\lceil \frac{n}{4} \rceil}{n})E[X]&= \frac{\lceil \frac{n}{4} \rceil}{n}  \sum_{i=1}^{\infty}(1- \frac{\lceil \frac{n}{4} \rceil}{n})^{i}in \\
+	E[X]&= n\sum_{i=1}^{\infty}(1- \frac{\lceil \frac{n}{4} \rceil}{n})^{i-1} \\
+	E[X]&= \frac{n^{2}}{\lceil \frac{n}{4} \rceil} \\
+	E[X]&= O(n) \\
+  \end{split}
+  \label{equ:1st}
+\end{eqnarray}
+
+
+
+And we can also calculate the count of every element when first time scanning,with hash table($O(n)$),then every time we take x just consume O(1) time, and similarily, its expectation time is $O(n +\frac{n}{\lceil \frac{n}{4} \rceil}) = O(n)$, same with our method.
+
+\subsection*{d.}
+The way we delete the element is that we swap the element with the tail element, then we modify the range of our random number generator, thus the tail element will never be selected. Pseudo-code is Algorithm \ref{algo:fv2}. (you may find it in the next page)
+The time complexity of this algorithm depends on its concrete implementation, we will discuss it in subsection e,f.
+
+\begin{algorithm}[h]
+  \caption{FrequentDeleteValue}
+  \label{algo:fv2}
+  \begin{algorithmic}[1]
+	\REQUIRE A,n
+	\ENSURE ~ ~\\ 
+	\STATE {$bound = n$}
+	\WHILE {bound!=0}
+	  \STATE {Pick a uniform random number i between 1 and bound}
+	  \STATE {Scan $A[1 \cdots bound]$,let x be the number of times A[i] appears in the array A}
+	  \IF { $x \geq \lceil \frac{n}{4} \rceil $}
+		\STATE {Return A[i]}
+	  \ELSE
+		\STATE {exchange A[i] with A[bound]}
+		\STATE {$bound = bound -1$}
+	  \ENDIF
+	\ENDWHILE
+  \end{algorithmic}
+\end{algorithm} 
+
+\subsection*{e.}
+
+The worst time is that there is only one frequent value appearing just $\lceil n/4 \rceil$ times and all the non-frequent values have all selected before the first frequent value is selected.
+This time the most loop times of our algorithm will be $n - \lceil n/4 \rceil +1 $. If we scan the whole array to find x each time,each loop cost O(n), the time complexity will be $O((n - \lceil n/4 \rceil +1)*n) = O(n^{2})$. 
+
+Or we use a hash table to store all the counters when first time scan the array costing O(n) first time, then take the different x in O(1) time, the time complexity will be $O((n - \lceil n/4 \rceil)*1 +n) = O(n)$.
+
+As we can see from the conclusion above, we successfully reduce the time complexity of the worst case.
+
+\subsection*{f.}
+As for the expectation time,because we don't know the real possibility distribution of element in array A, we can only find the expectation upper bound. that is, there is only one frequent value appearing just $\lceil \frac{n}{4} \rceil$.
+
+If we scan the whole array per loop.
+\begin{eqnarray}
+  \begin{split}
+	E[X] &=  \sum_{i=1}^{n - \lceil \frac{n}{4} \rceil + 1}\frac{\lceil \frac{n}{4} \rceil}{n-i+1} (\prod_{k=1}^{i-1}(1- \frac{\lceil \frac{n}{4} \rceil}{n-k+1}))in \\
+  \end{split}
+  \label{equ:2st}
+\end{eqnarray}
+the expecation number of iteration won't exceed the result we find in subsection c and the difference is only in the constant part, and intuitively, the algorithm will end soon than previous algorithm.
+
+So the time complexity will also be $O(n)$ 
+
+If we use hash table, because the iteration time is constant, so the first scaning dominates, the time complexity will also be $O(n)$.
+
+\end{document}

@@ -1,0 +1,140 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{2}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{2}
+\begin{document}
+\maketitle
+\newpage
+\section{Problem 8.1-3}
+Every comparison sort can be drawn as a binary tree, and all possible sequences are equal to the leaves of the tree. If there exist a linear time algorithm, the height of the binary tree must be 
+\begin{math}
+  cn
+\end{math}.
+and c is a constant.
+\subsection{$\frac{n!}{2}$}
+
+Assume the linear comparison algorithm exists for the number of all possible sequences (denoting $p_{1}$) have Equation \ref{eq:nf2}:
+\begin{equation}
+  \label{eq:nf2}
+  p_{1}\geq\frac{n!}{2} 
+\end{equation}
+
+As we all know, a full binary tree with height $h$ has the most leaves among the all the height-$h$ binary trees, and the maximum of the leaves is $2^{h}$,thus to keep the comparison algorithm linear we must have the Equation \ref{eq:hvsn}:  
+\begin{equation}
+  2^{cn} \geq 2^{h} \geq \frac{n!}{2}
+  \label{eq:hvsn}
+\end{equation}
+
+Use $lg$ function on both sides, then we'll get the induction \ref{eqa:nf2}:
+\begin{eqnarray}
+  \begin{split}
+	2^{cn} \geq& n!/2 \\
+	cn \geq& lg(n!) - 1 \\
+	cn \geq& \int_{1}^{n-1}lg(x)dx -1 \\
+	cn \geq& (n-1)lg(n-1) - 2n+2-1 \\
+	(c+2)n \geq& (n-1)lg(n-1) ~ ~ ~  (n\geq2)\\
+	(c+2)n \geq& (n/2)lg(n/2) \\
+	(2c+5) \geq& lg(n)
+  \end{split}
+  \label{eqa:nf2}
+\end{eqnarray}
+
+From \ref{eqa:nf2}, we know that c is dependent on n then the hypothesis is false.
+
+\subsection{$\frac{n!}{n}$}
+
+Assume the linear comparison algorithm exists for the number of all possible sequences (denoting $p_{1}$) have Equation \ref{eq:n1n}:
+\begin{equation}
+  \label{eq:n1n}
+  p_{1}\geq\frac{n!}{n} =  (n-1)!
+\end{equation}
+
+Such as previous subsection, to justify the hypothesis, we need to prove \ref{eq:hvsn2}
+
+\begin{equation}
+  2^{cn} \geq 2^{h} \geq (n-1)!
+  \label{eq:hvsn2}
+\end{equation}
+
+Use $lg$ function on both sides, then we'll get the induction \ref{eqa:nm1}:
+\begin{eqnarray}
+  \begin{split}
+	2^{cn} \geq& n-1! \\
+	cn \geq& lg((n-1)!) \\
+	cn \geq& lg((n-1)!) \\
+	cn \geq& \int_{1}^{n-2}lg(x)dx  \\
+	cn \geq& (n-2)lg(n-2) - 2n +3 \\
+	(c+2)n \geq& (n/2)lg(n/2) ~ ~ (n>4)\\
+	(c+2)n \geq& (n/2)lg(n/2) \\
+	(2c+5) \geq& lg(n)
+  \end{split}
+  \label{eqa:nm1}
+\end{eqnarray}
+
+From \ref{eqa:nm1}, we know that we know that c is dependent on n then the hypothesis is false.
+
+\subsection{$\frac{n!}{2^{n}}$}
+
+Assume the linear comparison algorithm exists for the number of all possible sequences (denoting $p_{1}$) have Equation \ref{eq:n2n}:
+\begin{equation}
+  \label{eq:n2n}
+  p_{1}\geq\frac{n!}{2^{n}}
+\end{equation}
+
+Such as previous subsection, to justify the hypothesis, we need to prove \ref{eq:hvsn3}
+
+\begin{equation}
+  2^{cn} \geq 2^{h} \geq \frac{n!}{2^{n}}  
+  \label{eq:hvsn3}
+\end{equation}
+
+Use $lg$ function on both sides, then we'll get the induction \ref{eqa:n2n}:
+\begin{eqnarray}
+  \begin{split}
+	2^{cn} \geq& \frac{n!}{2^{n}}  \\
+	cn \geq& lg(n!) - n \\
+	(c+1)n \geq& \int_{1}^{n-1}lg(x)dx  \\
+	(c+1)n \geq& (n-1)lg(n-1) - 2n +2 \\
+	(c+3)n \geq& (n/2)lg(n/2) ~ ~ (n>1)\\
+	(c+3)n \geq& (n/2)lg(n/2) \\
+	(2c+7)n \geq& lg(n)
+  \end{split}
+  \label{eqa:n2n}
+\end{eqnarray}
+
+From \ref{eqa:n2n}, we know that we know that c is dependent on n then the hypothesis is false.
+
+\subsection{Conclusion}
+Then under these 3 circumstances, we cannot find a linear comparison algorithm.
+
+
+\section{Problem 8.1-4}
+At first we know that each comparison sort algorithm can be regarded as a binary tree, and each possible sequence instance is a leaf node of the tree. \\ For each subarray, the number of total possible sequence is $k!$, and there is $\frac{n}{k}$ subarries.
+Then the number of total leaves is $k!^{\frac{n}{k}}$. \\
+Therefore the mimimum of the tree will be :
+
+\begin{eqnarray}
+  \begin{split}
+	 h \geq& \log (k!^{\frac{n}{k}})  \\
+	 \geq& \frac{n}{k}\log (k!)  \\
+	 >& \frac{n}{k}k\log k  \\
+	 =& n\log k  \\
+  \end{split}
+  \label{eqa:ksub}
+\end{eqnarray}
+
+As we know, the running time of the comparison sort algorithm is just a certain path of the binary search tree for each instance.
+\\ As a conclusion, $T(n) = \Omega(n \log k)$.
+
+\end{document}

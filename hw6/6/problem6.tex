@@ -1,0 +1,77 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{fancybox}
+\usepackage{tikz}
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{epsfig}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{5}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{6}
+\begin{document}
+\maketitle
+\newpage
+\section {Problem 26-2}
+\subsection*{a.}
+At first we just construct the G' = (V',E') as suggested:
+$$V' = \{x_{0},x_{1},\ldots,x_{n}\} \cup \{y_{0},y_{1},\ldots,y_{n}\},$$
+$$E' = \{(x_{0},x_{i}:i\in V\} \cup \{(y_{0},y_{i}:i\in V\} \cup \{(x_{i},y_{j}:(i,j) \in E\} $$
+Then we just build G' as a flow network, setting $x_{0}$ source and $y_{0}$ the sink and all edge capacities to be 1.
+
+For G', if we set L = $\{x_{1},x_{2},\ldots,x_{n}\}$ and R = $\{y_{1},y_{2},\ldots,y_{n}\}$, then there only edges from L to R, then we can construct a bipartite graph G'',and G''is a undirected version of G' without $x_{0}$ and $y_{0}$. 
+
+Then every vertex $i$ in G appears two times in G'', one is $x_{i}$ and the other is $y_{i}$, and edge $(i,j)$ in G only appears G'' as $(x_{i},y_{j})$. Then we can say that the edges in bipartite matching in G'' can be used in a certain path cover of G, the reasons are below:
+
+1. In the path cover of G, every vertex is included in exactly one path(including those path with length 0), and in the path, every vertex has only one entering edge and one leaving edge.
+
+2. The we consider bipartite matching in which ever vertex is used only once or never. For G'', every $x_{i}$ can be used once or never, then there can only be at most one edge associated with $x_{i}$ selected in the matching,that is,there can only be one edge leaving $i$ in G occurs in the matching. Similarly, every $y_{j}$ can be used once or never, the there can only be one edge enter $i$ in G occurs in the matching.
+
+We can see our matching meet the demand of cover path other than completeness, but it proves that the edges in bipartite matching in G'' can be used in a certain path cover of G.
+
+Then we just construct path cover P based on one of bipartite matching M,do it the following way:\\
+1.Firstly searching a vertex $i$ that is not in P,current path is $i$.\\
+2.Then if $x_{i}$ is unmatched,stop,we just add current path to P.\\
+3.If $x_{i}$ is matched with some $y_{j}$, add $j$ to current path. If $y_{j}$ is in some path $p \in P$, we just take out this path and combine it with current path with j as the link node, then put it back to P. Then we just re-start from 1. Otherwise we go to 2 and we process $x_{j}$ this time.
+
+After this loop, all the vertices are put into some path, and no vertex is put into more than one path, for every $x_{i}$ is only matched to at most one $y_{j}$. When building the path, we may start from middle node of a certain path, this time during the iteration we may break the path into two part, then if we find there current node is already in some path, we can just combine these two paths to make sure that every node only occurs in a single path. Because there is no cycles, when we enter a vertex we once left earlier, it must be the start of another path for we always end a path when there is no further candidate edge.
+
+Because every edge in M is used in some path, we can get a one-to-one correspondence between edges in the matching and edges in the constructed path cover.
+
+Then we show minimal $|P|$ can be constructed with the above algorithm just when we get the maximal matching.
+\begin{eqnarray*}
+  |V| =& \sum\limits_{p \in P}|p| \text{($|p|$stands for the vertices in p)} \\
+	    =& \sum\limits_{p \in P}(1+|p|-1)\\
+		=& |P| + \sum\limits_{p \in P}(|p|-1)\\
+		=& |P| + \sum\limits_{p \in P}(\text{number of edges in p})\\
+		=& |P| + |M|\\
+		=& |P| + |f|\\
+\end{eqnarray*}
+When we've got maximum flow $|f|$, we just get the minimal $|P|$.
+
+The total algorithm is that :
+1. Use FORD-FULKERSON to  find a maximum flow in G', and we've proved it is just a maximum bipartite matching M in G''.
+2. Use the method above to construct the path cover P, and that is just the minimal path cover.
+
+Then the algorithm use O(V+E) to build G', O(VE) to find the maximum bipartite matching,for every edge only visited once in our method above, then the total cost to build path is O(E), then the total running time of the algorithm is O(VE).
+\newpage
+
+\subsection*{b.}
+The algorithm won't work in the directed graphs that contain cycles. As the counter example below: in the left side is the original graph G, and in the right side is the G'', it is easy to find out that we can get a minimal path P with only with path $ (4,1,2,3) $, but in maximum bipartite matching, we can only find the maximum matching of 3, for that one of (x4,y1) and (x3,y1) can be one selected for matching. In my counter example, there may be two different maximum matching of 3, and both of them will produce 2 paths one is of 3 vertices and the other is only one vertex(i,e)(3,1,2) and (4). That is obviously wrong.
+
+\begin{figure}[!h]
+  \centering
+  \epsfig{figure=./2622.eps,scale = 0.5}
+  \caption{Counter Example}
+  \label{fig:ce2}
+\end{figure}
+
+
+\end{document}

@@ -1,0 +1,57 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{epsfig}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{3}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{4}
+\begin{document}
+\maketitle
+\newpage
+\section{Exercise 15.4-2}
+We can see that there may exist many LCSs in the table, and the algorithm will only print one same as the example presented in the textbook using b table.
+The principle is that we first look table C[m,n], if $X[m] == Y[n]$, is means that $X[m]$ must be in one LCS, thus we print these value, and recursive call algorithm in C[m-1,n-1].\\
+If $X[m] != Y[n] $, we must check C[m-1,n-1],C[m,n-1] and C[m-1,n].  \\
+1. if C[m-1,n-1] = C[m,n], it means both of X[m] and Y[n] won't exist in LCS, then we just call algorithm in C[m-1,n-1]. 
+\\ 2. if C[m-1,n-1] + 1 = C[m,n], and there is one from C[m-1,n],C[m,n-1] equal to C[m,n] and one lesee than C[m,n], then it mean we just go in the direction which one equal,but we won't print anything until we find $X[i] = Y[j]$. 
+\\ 3. if C[m-1,n-1] + 1 = C[m,n], and both C[m-1,n],C[m,n-1] are equal to C[m,n]], then it mean that there are two branches, both can genreate LCS,we just take a direction randomly, in the example, we always goes the direction with less dimension. 
+
+  \begin{algorithm}[h]
+	\caption{Reconstructing-LCS}
+	\label{algo:lcs}
+	\begin{algorithmic}[1]
+	  \REQUIRE c,X,Y,m,n
+	  \IF {$X[m] == Y[n]$}
+		\STATE {print X[m]}
+		\STATE {Reconstructing-LCS(C,X,Y,m-1,n-1)}
+	  \ELSE
+		\IF{$C[m,n] == C[m-1,n-1]$}
+		  \STATE {Reconstructing-LCS(C,X,Y,m-1,n-1)}
+		\ELSIF{$C[m-1,n]+C[m,n-1] = 2*C[m,n]$}
+		  \IF {$m>n$}
+			\STATE {Reconstructing-LCS(C,X,Y,m,n-1)}
+		  \ELSE
+			\STATE {Reconstructing-LCS(C,X,Y,m-1,n)}
+		  \ENDIF
+		\ELSE
+			\IF {$C[m-1,n]+1=C[m,n]$}
+			  \STATE {Reconstructing-LCS(C,X,Y,m-1,n)}
+			\ELSE
+			  \STATE {Reconstructing-LCS(C,X,Y,m,n-1)}
+			\ENDIF
+		\ENDIF
+	  \ENDIF
+	  \LASTCON 
+	\end{algorithmic}
+  \end{algorithm}
+  And we know the deepest recursive level is just the length of the diagonal,and in every recursive procedure, we just do things in constant time, Thus the total running time is just $O(m+n)$.
+\end{document}

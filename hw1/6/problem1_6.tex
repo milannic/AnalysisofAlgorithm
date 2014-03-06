@@ -1,0 +1,289 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{fancybox}
+\usepackage{tikz}
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{1}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{6}
+\begin{document}
+\maketitle
+\newpage
+\section{Exercises 4.4-4}
+$$T(n) = 2T(n-1) + 1 $$
+Drawing the recursion tree:\\
+\begin{tikzpicture}[level/.style={sibling distance=60mm/#1}]
+\node {$1$}
+  child {node  {$1$}
+    child {node   {$1$}
+      child {node {$\vdots$}}
+      child {node {$\vdots$}}
+    }
+    child {node  {$1$}
+      child {node {$\vdots$}}
+      child {node {$\vdots$}}
+    }
+  }
+  child {node  {$1$}
+    child {node  {$1$}
+      child {node {$\vdots$}}
+      child {node {$\vdots$}}
+    }
+      child {node  {$1$}
+    child {node {$\vdots$}}
+    child {node {$\vdots$}
+	  child [grow=right] {node {$\vdots$} edge from parent[draw=none]
+		child [grow=up] {node {$4$} edge from parent[draw=none]
+		  child [grow=up] {node {$2$} edge from parent[draw=none]
+			child [grow=up] {node {$1$} edge from parent[draw=none]}
+		  }
+		}
+		child [grow=down] {node {$\Theta(2^{n})$} edge from parent[draw=none]}
+	  }
+    }
+  }
+};
+\end{tikzpicture}
+$$T(n) = \sum_{i=0}^{n-1} 2^i + \Theta(2^n)= O(2^n) $$
+\\Let's take $g(n)=2^n -1$
+
+%%\center
+\begin{equation}
+\notag
+\begin{aligned}[b]
+T(n) &= 2T(n-1)+1 \\
+&\leq 2c_{0}(2^{n-1}-1) \\
+&\leq c_{0}(2^{n}) - 2c_{0}+1\\
+\end{aligned}
+\end{equation}
+If we take $c_{0} \geq 1/2$, then we can get :
+$$T(n)\leq c_{0}2^n$$
+\rule{3mm}{3mm}
+
+\newpage
+\section{Exercises 4.4-5}
+$$T(n) = T(n-1) + T(n/2) + n$$
+Drawing the recursion tree:\\
+\begin{tikzpicture}[level/.style={sibling distance=45mm/#1, level distance = 1.5cm}]
+\node {$n$}
+  child {node {$n-1$}
+    child {node {$n-2$}
+	  child {node {$n-3$}
+		child {node {$\vdots$}}
+		child {node {$\vdots$}}
+	  }
+	  child {node {$\frac{n-2}{2}$}
+		child {node {$\vdots$}}
+		child {node {$\vdots$}}
+	  }
+    }
+	child {node {$\frac{n-1}{2}$}
+	child {node {$\frac{n-3}{2}$}
+		child {node {$\vdots$}}
+		child {node {$\vdots$}}
+	  }
+	  child {node {$\frac{n-1}{4}$}
+		child {node {$\vdots$}}
+		child {node {$\vdots$}}
+	  }
+    }
+  }
+  child {node   {$n/2$}
+	child {node {$\frac{n-2}{2}$}
+	  child {node {$\frac{n-4}{2}$}
+		child {node {$\vdots$}}
+		child {node {$\vdots$}}
+	  }
+	  child {node {$\frac{n-2}{4}$}
+		child {node {$\vdots$}}
+		child {node {$\vdots$}}
+	  }
+    }
+	  child {node  {$\frac{n}{4}$}
+		child {node {$\frac{n-4}{2}$}
+		  child {node {$\vdots$}}
+		  child {node {$\vdots$}}
+		}
+		child {node {$\frac{n-2}{4}$}
+		  child {node {$\vdots$}}
+		  child {node {$\vdots$}
+			  child [grow=right] {node  {$\vdots$} edge from parent[draw=none]
+				child [grow=up] {node  {$\frac{27n}{8}-\frac{37}{4}$} edge from parent[draw=none]
+				child [grow=up] {node  {$\frac{9n}{4}-\frac{7}{2}$} edge from parent[draw=none]
+				  child [grow=up] {node  {$\frac{3n}{2}-1$} edge from parent[draw=none]
+					  child [grow=up] {node  {$n$} edge from parent[draw=none]}
+					}
+				  }
+				}
+				child [grow=down] {node {$O((\frac{3}{2})^{n}n)$} edge from parent[draw=none]
+				}
+			  }
+		   }
+		}
+	  }
+};
+\end{tikzpicture}
+\\ The recursion tree is not full, then we can only assume the upper bound.
+$$n = O(n(\frac{3}{2})^n)$$
+
+\begin{equation}
+\notag
+\begin{aligned}[b]
+T(n) &< \sum_{i=0}^{n} (\frac{3}{2})^i  n \\
+&= \frac{(3/2)^{n+1} -1 }{3/2 -1} n \\
+&< 2n \frac{(3/2)^{n+1}}{3/2 -1} \\
+&= O(n (\frac{3}{2})^n) \\
+\end{aligned}
+\end{equation}
+
+Let's finish substitute method:take $g(n)=n {(\frac{3}{2})}^n$
+\\
+\begin{equation}
+\notag
+\begin{aligned}[b]
+T(n) &= T(n-1) + T(n/2) + n \\
+&\leq c_{0}(n-1)(\frac{3}{2})^{(n-1)} + c_{0}(\frac{n}{2})(\frac{3}{2})^{(n/2)} +n \\
+&\leq c_{0}(n-1)(\frac{3}{2})^{(n-1)} + c_{0}(\frac{n}{2})(\frac{3}{2})^{(n/2)} +n \\
+&\leq c_{0}n(\frac{3}{2})^{(n)} - (\frac{1}{2})c_{0}n(\frac{3}{2})^{(n/2)}((\frac{3}{2})^{(n/2)-1} -1 ) - (c_{0}(\frac{3}{2})^{(n-1)} - n )  \\
+\end{aligned}
+\end{equation}
+We know that $ f(n) = n -(\frac{3}{2})^n $is nonnegative when $n>1$, then take a $c_{0} \geq 0$, there will be big enough n to make last two terms negative(i.e. $n \geq 2$ when $c{0} \geq 1 $).\\ Then $$T(n)=O(n (\frac{3}{2})^n)$$
+\rule{3mm}{3mm}
+
+\noindent Actually we can prove that $T(n) = T(n-1) + T(n/2) + n = O((1+\epsilon)^n) any (\epsilon > 0)$  
+\begin{equation}
+\notag
+\begin{aligned}[b]
+T(n) &= T(n-1) + T(n/2) + n \\
+&\leq c_{0}(1+\epsilon)^{(n-1)} + c_{0}(1+\epsilon)^{(n/2)} +n \\
+&\leq c_{0}(1+\epsilon)^{(n)} - c_{0}((1+\epsilon)^{(n)}-(1+\epsilon)^{(n-1)}-(1+\epsilon)^{(n/2)} -\frac{n}{c_{0}}) \\
+\end{aligned}
+\end{equation}
+And the question trasfer to find a $c_{0}$ and $n_{0}$ to make when any $ n > n_{0}$ ,$(1+\epsilon)^{(n)}-(1+\epsilon)^{(n-1)}-(1+\epsilon)^{(n/2)} -\frac{n}{c_{0}} > 0 $
+
+\begin{equation}
+\notag
+\begin{aligned}[b]
+(1+\epsilon)^{(n)}-(1+\epsilon)^{(n-1)}-(1+\epsilon)^{(n/2)} -\frac{n}{c_{0}} &> 0\\
+(1+\epsilon)^{(n)} &> (1+\epsilon)^{(n-1)}+(1+\epsilon)^{(n/2)} + \frac{n}{c_{0}}\\
+(1+\epsilon) &> 1 +(1+\epsilon)^{(-(n+2)/2)} + \frac{n}{c_{0}}\\
+\end{aligned}
+\end{equation}
+
+\noindent Because $\lim\limits_{n\to\infty}{((1+\epsilon)^{(-(n+2)/2)} + \frac{n}{c_{0}})}  = 0$ \\
+Then for any $\epsilon >0 $, we can find a $n_{0}$, when $n>n_{0}$,$\lim\limits_{n\to\infty}{((1+\epsilon)^{(-(n+2)/2)} + \frac{n}{c_{0}})} =\epsilon_{1} \leq \epsilon $ 
+Therefore:
+\begin{equation}
+\notag
+\begin{aligned}[b]
+T(n) &= T(n-1) + T(n/2) + n \\
+&\leq c_{0}(1+\epsilon)^{(n)} \\
+& = O((1+\epsilon)^{(n)})\\
+\end{aligned}
+\end{equation}
+
+\rule{3mm}{3mm}
+
+\section{Problem 4-3}
+\subsection*{a. $T(n)=4T(n/3)+ n \lg n $}
+It is obvious that $n \lg n = O(n^{\log_{3}{4} - \epsilon}) (for~some~\epsilon > 0 )$ and master theorem can be applied to this formula,then we have $$ a=4 , b=3, f(n)=O(n^{\log_{3}{4} - \epsilon})=O(n^{\log_{b}a - \epsilon })$$
+Therefore $T(n) = \Theta(n^{\log_{3}{4}})$
+\subsection*{d. $T(n)=3T(n/3-2)+ n/2 $}
+This formula looks like $$T^{'}(n)=3T^{'}(n/3)+ n/2 \eqno(*)$$ And master theorem can be applied to (*),then we have $T^{'} = \Theta (n \ln n)$
+\\ It is obvious to see that $T(n) < T^{'} $, then we make the assumption that $T(n) = O (n \ln n)$
+\\ Substitute Method: take $g(n) = n \ln n $
+\begin{equation}
+\notag
+\begin{aligned}[b]
+T(n) &= 3T(n/3-2) + n/2 \\
+&\leq 3c_{0}(n/3-2) \ln (n/3 -2) +n/2\\
+&< 3c_{0}(n/3) \ln \frac{n}{3} +n/2 \\
+&= c_{0}n \ln n - c_{0}n \ln3 +n/2 \\
+&= c_{0}n \ln n - n(c_{0} \ln3 -1/2) \\
+&= O(n \ln n)~ ~ ~ ~ (c_{0}> \frac{1}{2 \ln 3} )
+\end{aligned}
+\end{equation}
+\rule{3mm}{3mm}
+\subsection*{h. $T(n)=T(n-1)+ \lg n $}
+\begin{equation}
+\notag
+\begin{aligned}[b]
+T(n) &= T(n-1) + \lg n \\
+&= T(n-2) + \lg n + \lg (n-1)\\
+&= T(n-3) + \lg n + \lg (n-1) + \lg (n-2)\\
+& \cdots \\
+&= T(0) + \sum_{i=1}^{n}\lg i \\
+&= c_{0} + \sum_{i=1}^{n}\lg i \\
+&< c_{0} + \int_{1}^{n} \lg x dx \\
+&< c_{0} + \frac{1}{\ln 2}\int_{1}^{n} \ln x dx \\
+&= c_{0} + \frac{1}{\ln 2}(n\ln n -n +1)\\
+&= O(n\ln n)\\
+\end{aligned}
+\end{equation}
+
+Then let's do substitution:take $g(n)= n\ln n$
+\begin{equation}
+\notag
+\begin{aligned}[b]
+T(n) &= T(n-1) + \lg n \\
+&\leq c_{0}(n-1)\ln (n-1) + \lg n \\
+&\leq c_{0}(n-1) \ln n +\lg n \\
+&= c_{0}(n-1) \ln n +\lg n \\
+&= c_{0}n \ln n -c_{0}\ln n + \lg n \\
+&= c_{0}n \ln n -(c_{0}\ln n - \lg n) \\
+&= c_{0}n \ln n -(\frac{c_{0}\lg n}{\lg e} - \lg n) \\
+&= O(n\ln n) (c_{0} \geq \lg e )\\
+\end{aligned}
+\end{equation}
+\rule{3mm}{3mm}
+
+\subsection*{j. $T(n)=\sqrt{n} T(\sqrt {n})+ n $}
+\begin{equation}
+\notag
+\begin{aligned}[b]
+T(n) &= \sqrt{n} T(\sqrt {n})+ n \\
+&= n^{\frac{1}{2}}(n^{\frac{1}{4}}T(n^{\frac{1}{4}}) +n^{\frac{1}{2}}) + n\\
+&= n^{\frac{3}{4}}T(n^{\frac{1}{4}}) + n+n\\
+&= n^{\frac{3}{4}}(n^{\frac{1}{8}}T(n^{\frac{1}{8}}) +n^{\frac{1}{4}}) + n+n\\
+&= n^{\frac{7}{8}}T(n^{\frac{1}{8}})+n+n+n\\
+& \cdots \\
+&= n^{\frac{2^{i}-1}{2^{i}}}T(n^{\frac{1}{2^{i}}})+in\\
+\end{aligned}
+\end{equation}
+We want to stop the iteration when $n^{\frac{1}{2^i}} = 1.00001 $
+\begin{equation}
+\notag
+\begin{aligned}[b]
+n^{\frac{1}{2^i}} &= \ln 1.00001  \\
+\frac{1}{2^i} \ln n &= \ln 1.00001 \\
+ \ln n &= 2^i \ln 1.00001  \\
+ \ln \ln n &= i \ln 2 +\ln\ln 1.00001 \\
+ i &= (\ln \ln n - \ln \ln 1.00001) / \ln 2 \\
+\end{aligned}
+\end{equation}
+Therefore $$T(n) = O(n \ln \ln n)$$
+
+
+Then let's do substitution:take $g(n)= n\ln\ln n -n $
+\begin{equation}
+\notag
+\begin{aligned}[b]
+T(n) &= \sqrt{n} T(\sqrt {n})+ n \\
+&\leq c_{0}n^{\frac{1}{2}} (n^{\frac{1}{2}} \ln \ln (n^{\frac{1}{2}}) - n^{\frac{1}{2}}) +n \\
+&= \frac{1}{2} c_{0}n \ln \ln n - c_{0}n +n \\
+&= c_{1}n \ln \ln n - (2c_{1}-1)n ~~~({c_{0}=2c_{1}})\\
+&= O(n \ln\ln n) ~~~~ (c_{1} \geq \frac{1}{2})\\
+\end{aligned}
+\end{equation}
+\rule{3mm}{3mm}
+
+\end{document}

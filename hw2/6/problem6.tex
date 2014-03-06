@@ -1,0 +1,74 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{fancybox}
+\usepackage{tikz}
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{1}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{6}
+\begin{document}
+\maketitle
+\newpage
+\section {Exercise 5.4-2}
+According to Inclusion-Exclusion principle, when $b+1$ balls are throwing into the bin, there must be at least one bin with more than one ball.
+\\Then we set random variable $$X = \left\{ The~total~balls~thrown~when~first~time~there~is~one~bin~with~one~more~ball. \right\}$$ And we know that X range from 2 to b+1.
+Then we sequentially consider each possible $x$.
+\\  When $X=2$, the first ball can be thrown randomly, as long as the second ball be with it. Then we get:
+$$P(X=2) = \frac{b-1}{b}$$
+When $X=3$, the first ball can be thrown randomly, and the second ball must be different from it, and the third ball can switch from the previous two. Then we get: 
+$$P(X=3) = \frac{b-1}{b}*\frac{2}{b}$$
+When $X=4$, the first ball can be thrown randomly, then the second ball and the third ball must be different from each other, and the fourth ball can switch from the previous three. Then we get: 
+$$P(X=4) = \frac{b-1}{b}*\frac{b-2}{b}*\frac{3}{b}$$
+Similarly:
+$$P(X=i) = ( \prod_{k=0}^{i-2}\left( b-k \right) ) *\frac{i-1}{b^{i}} ~ ~ (2\leq i \leq b+1)$$
+Therefore the expectation of $X$ is : 
+\begin{eqnarray}
+  \begin{split}
+	E(X) &= \sum_{i=2}^{b+1}E(X_{i}) \\
+	 &= \sum_{i=2}^{b+1} i * (\prod_{k=1}^{i-2}\left( b-k \right)) *\frac{i-1}{b^{i}}\\
+  \end{split}
+\end{eqnarray}
+
+\section {Exercise 5.4-6}
+\subsection {Expectation of Number of Empty Bins}
+Number all the bins, and set Indication Random Variable 
+$$X_{i} = \left\{The~ith~bin~is~empty~when~n~balls~have~been~throwed \right\}$$
+Then the total number of empty bins can be described as follow:
+$$ X = \sum_{i=1}^{n}X_{i}$$
+And for each $X_{i}$, $P(X_{i}=1) = (1-\frac{1}{n})^{n}$ \\
+(Notice that when $\lim\limits_{n\to\infty}(1-\frac{1}{n})^{n} = \frac{1}{e}$)
+\\ Then we have:
+\begin{eqnarray}
+  \begin{split}
+	E(X) &= \sum_{i=1}^{n}E(X_{i}) \\
+	 &= \sum_{i=1}^{n}(1-\frac{1}{n})^{n} \\
+	 &= n(1-\frac{1}{n})^{n} \\
+  \end{split}
+\end{eqnarray}
+
+\subsection {Expectation of Number of One Ball Bins}
+Number all the bins, and set Indication Random Variable 
+$$X_{i} = \left\{The~ith~bin~is~with only one ball~when~n~balls~have~been~throwed \right\}$$
+Then the total number of empty bins can be described as follow:
+$$ X = \sum_{i=1}^{n}X_{i}$$
+And for each $X_{i}$, $P(X_{i}=1) = n*(1-\frac{1}{n})^{n-1}*\frac{1}{n} =(1-\frac{1}{n})^{n-1} $ \\
+(Notice that when $\lim\limits_{n\to\infty}(1-\frac{1}{n})^{n-1} = \frac{1}{e}$)
+\\ Then we have:
+\begin{eqnarray}
+  \begin{split}
+	E(X) &= \sum_{i=1}^{n}E(X_{i}) \\
+	 &= \sum_{i=1}^{n}(1-\frac{1}{n})^{n-1} \\
+	 &= n(1-\frac{1}{n})^{n-1} \\
+  \end{split}
+\end{eqnarray}
+
+\end{document}

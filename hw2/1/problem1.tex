@@ -1,0 +1,84 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{2}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{1}
+\begin{document}
+\maketitle
+\newpage
+
+\section*{Exersice 8.3-4}
+
+\subsection* {1.Regular Part}
+At first, let we introduce Lemma \ref{lemma:introtextbook}:\\
+\begin{lemma}
+  Given n b-bit numbers and any positive integer 
+  \begin{math}
+	r\leq b
+  \end{math}
+  , Radix-Sort correctly sorts these numbers in 
+  \begin{math}
+	\Theta((b/r)(n+2^{r}))
+  \end{math}
+  time if the stable sort it uses 
+  \begin{math}
+	\Theta(n+k) 
+  \end{math}
+  time for the inputs ranges from 0 to k-1.
+  \label{lemma:introtextbook}
+\end{lemma}
+
+For any integer $k$ between 0 to $n^{3}-1$, we treat it as a binary number with $lg(n^{3}) = 3\lceil lg(n) \rceil$ bit, as for Lemma \ref{lemma:introtextbook}, we take 
+\begin{equation}
+  \begin{split}
+	b = 3\lceil lg(n) \rceil , 
+	r = \lceil lg(n) \rceil
+  \end{split}
+  \label{equ:denoting1}
+\end{equation}
+For $\lceil lg(n) \rceil$ bits binary number, it ranges from 0 to $n-1$ in decimal. \\
+Then if we can sort them in $\Theta(n+n) = \Theta(n)$ time,
+according to Lemma \ref{lemma:introtextbook}, we can sort these n numbers in $\Theta((\frac{\lceil 3lg(n) \rceil}{\lceil lg(n) \rceil}(n+2^{\lceil lg(n) \rceil}))) = \Theta (3(n+n)) = \Theta(n)$.
+
+As is well known, we can easily find an algorithm such as counting sort to stable sort n numbers ranging from 0 to  $n-1$, thus the procedure to solve the problem is modified-radix sort, that is we take each $lg(n)$ binary bit as a individual part of each number ranging from 0 to $n^{3}-1$ to execute the radix sort.
+
+\subsection*{2. Compared to Heapsort}
+As we all know, Heapsort is a kind of comparison sort method, then we have 
+\begin{equation}
+  \begin{split}
+	T_{HeapSort}(n) = \Theta(n \lg n)
+  \end{split}
+  \label{equ:hs}
+\end{equation}
+
+Gradually expand the range of n numbers mentioned above, then we will find a lower bound for the range that Radix-Sort method cannot solve it in liear time and must spend $\Theta (n \lg n)$ time on it.
+Intuitively, as the division method mentioned above, the range from 0 to $n^{c}-1$ for any constant $c$ can be solved by Radix-Sort in linear time.
+
+Then we set c to $\lg n$, the number of the input will be from 0 to $n^{\lg n}-1$, then we divide them per $lgn$ bits. As we mentioned above, each $lgn$ bits can also be sorted within $\Theta(n)$ time.  \\
+While this time, the coefficient $b/r$ will be $\lg {n^{\lg n}} / \lg n  = \lg n$
+Then the whole method cost 
+\begin{equation}
+  \Theta(n\lg n) 
+  \label{equ:nlg}
+\end{equation}
+
+We change another division method to set $ r = \frac{\lg n^{\lg n}}{2}$ (the constant coefficient 2 can be any positive integer),
+the coefficient $b/r$ will be $2$, but we need $\Theta (n+ 2^{\lg n^{\lg n}})$ to sort every part of the numbers and the total cost will be: 
+\begin{equation}
+  \Theta(n^{\lg n}) 
+  \label{equ:nplgn}
+\end{equation}
+And this result will be larger than previous division.
+Then as a conclusion, when we set the range as from 0 to $n^{\lg n}-1$, the radix sort method will have the same performance as the Heap Sort.
+
+\end{document}

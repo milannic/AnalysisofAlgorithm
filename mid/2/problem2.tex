@@ -1,0 +1,105 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{4}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{2}
+\begin{document}
+\maketitle
+\newpage
+
+\section*{Problem 2.} 
+Because we can only visit per bikestand once, the problem is treated as a non-preemptable job schedule problem, we treat refilling a certain bikestand i as a ceratin job must start before $t_{i} - c_{i}$.
+
+At first we say that for such a  problem if there is a possible schedule with idle time between any two neighbor jobs, we can remove those space to get a tighter scheduler and the solution is also possible, then we can always finish a job and start another job and can still find a optimum solution if there are. This shrinks our solution space.
+
+Let B be the set of all the bikestands and S be any schedule.
+
+{\bfseries 
+  And we define the work set B compatible with t(time) is that the smallest $t_{i} - c_{i}$ of a certain job is  no larger than t. That is, it is still possible for all the jobs in the set B can be finished in time.
+}
+
+Now consider our problem E(B,t), the optimum substructure is below:(Notice that if there is possible solution, \textbf{E(B,t) = 1})
+\begin{equation*}
+  E(B,t) = \left \{
+	\begin{array}{l}
+	  {0} \qquad \text{if} \qquad \text{B is not compatible with t.}  \\
+	  {1} \qquad \text{if}  B = \emptyset   \\
+	  { max_{b_{i}\in B}(E(B-\{b_{i}\},t+c_{i}))} \qquad \text{else}  \\
+	\end{array}
+  \right \}
+\end{equation*}
+
+Now we prove the correctness of it.
+
+1.If B is not compatible with t, it means that there is always at least a job cannot be finished after time t, thus the answer is obviously 0. 
+
+2.If B is empty set, it means that no job should be schedule after time t, then the answer is always 1.
+
+3.Otherwise, notice that the problem is a binary-value problem, if $E(B,t)_{op}=1$, the first job excuted is just $b_{i}$,then we take out $b_{i}$, and we say $E(B-\{b_{i}\},t+c_{i}) = E(B-\{b_{i}\},t+c_{i})_{op} = 1$ is also the optimal solution,other wise ,the E(B,t) cannnot be 1. 
+
+If E(B,t) = 0, it means that the all the job cannot be finished, then it soon end at once.
+
+Notice that the schedule of $E(B-\{b_{i}\},t+c_{i})$ may not be the same as $E(B-\{b_{i}\},t+c_{i})_{op}$, but for this binary-value problem, we can say $E(B-\{b_{i}\},t+c_{i})$ is also a optimum.
+
+
+\textbf{The greedy algorithm is that we always take the job $b_{i}$ with the earliest $t_{i}$ in the remaining job queue to execute. }
+
+Then we prove the safety of the greedy algorithm.
+
+If the optimum of E(B,t) is 0, greedy algorithm will return 0,it is no doubt.
+
+Then if the optimum of E(B,t) is 1, then we apply the greedy algorithm, we can always find a possible solution.
+
+Notice that if 
+$$\{E(B,t)_{op} = 1\} \Leftrightarrow \\ $$
+$$\{ \text{there is at least one sequence of B that will let the recursion continue untill B  = } \quad \emptyset \}$$ 
+
+$$\{E(B,t)_{SE} = 1\} \Leftrightarrow \\ $$
+$$\{\text{sequence SE will let the recursion continue untill B  = } \quad \emptyset \}$$ 
+Assume that $b_{i}$ is the bikestand with the earliest $t_{i}$ in B for the problem E(B,t) and the solution of greedy algorithm is $SE_{ga}$.  
+
+Let one optimal solution sequence for E(B,t) be $SE_{op}$, if $SE_{op} = SE_{ga}$ then we have finished the proof. 
+
+Otherwise, W.L.O.G,we assume the only difference betwwen $SE_{ga}$ and $SE_{op}$ is the position of $b_{i}$,we assume there is only $b_{k}$ before $b_{i}$ in $SE_{op}$, we can simply exchange $b_{k}$ with $b_{i}$, the new sequence is also compatible. 
+
+Because $b_{i}$ is the job with the earliest $t_{i}$, and if in the $SE_{op}$, $b_{i}$ finishes in $f_{i}$, then there must be $f_{k} < f_{i} \leq t_{i} \leq t_{k}$, after the exchange, $f'_{i}<f'_{k} =  f_{i} \leq t_{i} \leq t_{k}$, so the new schedule must also be compatible.
+
+Thus for our $SE_{ga}$, the recursion can also continue untill the set be empty, that is,so that is $E(B,t)_{SE_{ga}} = 1$.
+
+Generally, if there are a lot of differences between $SE_{op}$ and  $SE_{ga}$ we can gradually exchange elements pair in $SE_{op}$ to make it $SE_{ga}$ without avoiding compatibility. 
+
+So far we have proved that if there are schedules all the jobs can be finished then our greedy algorithm safely find one of them.
+
+The pseudo-code is below the running time is $O(nlgn) $ dominated by the \textbf{sort}(we can apply a heap sort to this problem),the greedy algorithm only runs a length-n loop and costs $O(n)$,thus the total running time is still $O(n)$:
+\begin{algorithm}[h]
+  \caption{refill}
+  \label{algo:refill}
+  \begin{algorithmic}[1]
+	\REQUIRE B,C,T
+	\ENSURE ~ ~\\ 
+	\STATE {sort B in the ascending order correspoding to T}
+	\STATE {$let K[1..|B|] = B$}
+	\STATE {$t = 0$}
+	\STATE {$current = 0$}
+	\WHILE {$B \neq \emptyset$ }
+	  \STATE {$current = POP(B)$}
+		\IF {$t > T[current] - C[current]$}
+		  \STATE {$ K = \emptyset$}
+		\ELSE 
+		  \STATE {$ t = t+C[current] $}
+		\ENDIF
+	\ENDWHILE
+	\LASTCON $K$
+  \end{algorithmic}
+\end{algorithm} 
+\end{document}

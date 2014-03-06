@@ -1,0 +1,65 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multicol}
+\usepackage{epsfig}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{3}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{3}
+\begin{document}
+\maketitle
+\newpage
+\section*{Exercise 15.1-2}
+At first we give the density table Table \ref{tab:dtable},  and we set the total length is 11.
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
+	\hline
+	length(i) &  1&2&3&4& 5& 6& 7& 8& 9& 10 & 11 \\
+	\hline
+	price(pi)& 1&5&8&9&14&17&17&20&24&29&30  \\
+	\hline
+	density(di)& 1&	2.5& 2.6667& 2.25& 2.8&	2.833& 2.428& 2.5& 2.667& 2.9 & 2.727 \\
+	\hline
+  \end{tabular}
+  \caption{Density Table}
+  \label{tab:dtable}
+\end{table}
+And we can see that when cutting length is 10, we have max density, thus according to greedy algorithm, we should at first cut a piece of rope with the length of 10 and the left is only 1 mile. Thus the total value we get is $29+1 = 30$.
+Obviously this is not the optimum, we can easily find a another solution better than this.
+For example: we first cut a 5 mile role then a 6 mile rope, the total value is $14+17=31 > 30$.
+Thus we cannot apply greedy algorithm to this problem.
+\section*{Exercise 15.1-3}
+The algorithm is described in Algorithm \ref{algo:cutrod}, the main frame is just the original cutting-rod bottom up dynamic programming algorithm,a little modification is that we need to add a cost per cutting time. Notice that in the loop when i equals j(one last cutting), we shouldn't add a c as the cost, because there is nothing left. 
+  \begin{algorithm}[h]
+	\caption{Modified-Rod-Cutting-Algorithm}
+	\label{algo:cutrod}
+	\begin{algorithmic}[1]
+	  \REQUIRE p,n
+	  \ENSURE ~ ~\\ 
+	  \STATE {let $r[1 \cdots n]$ be a new array }
+	  \STATE {$r[0] = 0$}
+	  \FOR { j = 1 to n} 
+		\STATE {$q = -\infty$ }
+		\FOR {$i=1$ to $j$}
+		  \IF {$i = = j$}
+			\STATE {$cost = 0$}
+		  \ELSE 
+			\STATE {$cost = c$}
+		  \ENDIF
+		  \STATE {$q = max(q,p[i]+r[j-i]+cost)$}
+		\ENDFOR
+		\STATE {$r[j] = q$ }
+	  \ENDFOR
+	  \LASTCON r[n]	
+	\end{algorithmic}
+  \end{algorithm}
+\end{document}

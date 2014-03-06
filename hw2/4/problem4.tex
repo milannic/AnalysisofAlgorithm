@@ -1,0 +1,128 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{epsfig}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{2}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{4}
+\begin{document}
+\maketitle
+\newpage
+\section{Weighted Median}
+\subsection* {a.}
+When $w_{i} = 1/n$, then every element of $<x_{1},x_{2},\cdots,x_{n}>$ has the same weight.\\
+As for the median, this time we only consider the total number of elements is odd(otherwise the median is the mean of middle two elements and the weight doesn't exsit), there are $\lfloor n/2 \rfloor$ elements smaller than it, then the sum of the weight of these elements are: 
+\begin{equation}
+  \sum_{i=1}^{\lfloor n/2 \rfloor} w_{i} = \frac{\lfloor n/2 \rfloor}{n} \leq \frac{1}{2} 
+  \label{equ:leftside1}
+\end{equation}
+And for those elements larger than median, their weight also have Equation \ref{equ:leftside1}
+\begin{equation}
+  \sum_{i=\lfloor n/2 \rfloor+2}^{n} w_{i} = \frac{\lfloor n/2 \rfloor}{n} \leq \frac{1}{2} 
+  \label{equ:rightside1}
+\end{equation}
+Then the median also meets the definition of the weighted median, then they are equal.
+\subsection* {b.}
+As we know the worse case running time of $Merge Sort$ is $O(n\lg n)$, then we can first sort the array, and the sorted array denotes as $A_{sorted}$. \\
+Then we sequentially cumulate the weight(denoting as $weight_{sum}$) from $A_{sorted}[0]$ to $A_{sorted}[n]$, when first time $weight_{sum} \geq \frac{1}{2}$, we take current element $A[i]$ as the weighted median. In the latter procedure, the time complexity is just $O(n)$, then the total worst-case running time is $O(n \lg n)$.
+\\ Firstly we modify Merge-Sort to return the array of corresponding index of original array with a sorted sequence. Here we won't post the pesudo-code of Merge-Sort, for it is among the most common algorithm.
+
+  \begin{algorithm}[h]
+  \caption{FindWeightedMedian}
+  \label{algo:weightmedian}
+  \begin{algorithmic}[1]
+	\REQUIRE X,xstart=0,xend=n,W
+	\ENSURE ~ ~\\ 
+	\STATE {$sum = 0$};
+	\STATE {$i = 0$};
+	\STATE {$Y = Merge-Sort(X,xstart,xend)$} \\	
+	\WHILE {$sum < \frac{1}{2}$} 
+	\STATE {$sum += W[Y[i]]$} \\
+	\STATE {$i += 1$} \\
+	\ENDWHILE
+	\LASTCON $X[Y[i]]$	
+  \end{algorithmic}
+  \end{algorithm}
+
+\subsection* {c.}
+Firstly we introduce algorithm SELECT(A,i,n), this algorithm can find the $i$th order statistic in $\Theta(n)$,A is the array and n is the length.
+  \begin{algorithm}[h]
+  \caption{FindWeightedMedian2}
+  \label{algo:weightmedian2}
+  \begin{algorithmic}[1]
+	\REQUIRE X,length=n,W,ws=$\frac{1}{2}$
+	\ENSURE ~ ~\\ 
+	\STATE {rvalue = 0 }
+	\IF {length = = 1}
+	\STATE {rvalue = A[1]}
+	\ENDIF
+	\STATE {$temp_weight = 0$}
+	\STATE {$pivot = SELECT(A,\frac{n}{2},n)$ }
+	\STATE {$L = \left\{x \in A, x \leq pivot \right\}$}
+	\STATE {$H = \left\{x \in A, x > pivot \right\}$}
+	\STATE {temp\_weight = $\sum_{x\in L}$ W[x] }
+	\IF {temp\_weight = = ws }
+	  \STATE{ rvalue = median}
+	\ELSIF {temp\_weight $>$ ws}
+	  \STATE{rvalue = FindWeightedMedian2(L,length(L),ws)}
+	\ELSE
+	  \STATE{rvalue = FindWeightedMedian2(H,length(H),ws-temp\_weight)}
+	\ENDIF
+	\LASTCON $rvalue$	
+  \end{algorithmic}
+  \end{algorithm}
+\\ For this algorithm ,we have
+\begin{equation}
+  T(n) = T(n/2) + \Theta(n)
+  \label{equ:weightedmedian2}
+\end{equation}
+From master theorem, we know that a = 1, b =2 , and $f(n) = \Theta(n)$, then $T(n) = \Theta(n)$.
+\\ Next we concisely prove that in each recursion, the weighted median is still in the left input array. \\In the first recurison, we find the median of the whole array, and set median as the pivot to cut the whole array into two sets,namely L and H. Then we sum the weight of all the elements in L.\\ If the sum is larger than the pre-defined threshold(in the 1st recursion it is 1/2).It is easy to know that the weighted median is in the L sets.
+Then we can apply the same algorithm to L. \\ 
+If the sum is equal to the threshold, then we know the median(pivot) is just the weighted-median.\\
+If the sum is less than the threshold, the weighted-median must be in the H part. and if we apply the same algorithm to H set,the new threshold must be original threshold minus sum. Because the elements in L set are also contributing to the weighted median. 
+\\ Then we have proved that in every level of recursion, the weighted-median is in the remain array.
+
+\subsection* {d.One Dimension Post-Office Problem}
+As a illustration, we draw a figure \ref{fig:1dim} to indicate one-dimension distribution of the array elements, to simplify the induction, we assume that the array is sorted.The shadow circle in the figure indicates the weighted median points and it is denoted as $p[m]$,and its weight is $w_{m}$
+\begin{figure}[h]
+  \centering
+  \epsfig{figure=./hw2_4_1.eps, scale = 1}
+  \caption{One Dimension Post Office Problem}
+  \label{fig:1dim}
+\end{figure}
+
+It is obvious that the optimum can only exist between the range of these circles, then we consider the derivative of $\sum_{i=1}^{n}w_{i}d(p,p_{i})$respect to $p$ of all the space between two neighbor points. It is easy to know that the derivative of the sum isn't continuous, and in every space between two neighbor points and every point, it will have the constant value.
+\\
+Start from weighted median. In this point, the sum's derivative is $\sum_{i=1}^{m-1}w_{i}-\sum_{j=m+1}^{n}w_{j}$, we don't know its sign.\\ 
+Then we take a look at the derivatives in its neighborhood.\\
+In $(p[m],p[m]+dp)$, the derivatives will be $\sum_{i=1}^{m}w_{i}-\sum_{j=m+1}^{n}w_{j}$, recall the definition of weighted median, its derivative is positive. \\
+Similarily, in $(p[m]-dp,p[m])$, the derivatives will be $\sum_{i=1}^{m-1}w_{i}-\sum_{j=m}^{n}w_{j}$, its derivative will be negative.\\
+\\ We can draw the conclusion that weighted median is the local minimum of the sum function. \\
+Then we check all the derivatives of the dimension space, and the derivative sign is indicated in the figure. We can see that the weighted median is the only local minimum and also the global minimum.
+
+\subsection* {e.Two Dimension Post-Office Problem}
+Two dimension post-office problem can be regarded as a extension of one dimension post office problem. \\
+Firstly we define $X[n]$ is the sorted array that whose elements are the first dimension of orginal points set,and $x_{wm}$ is its weighted median. Similarily we define $Y[n]$ and $y_{wm}$. \\
+We draw the conclusion that the minimum of the sum is the 2-D point $(x_{wm},y_{wm})$.
+Same illustration as previous subsection is shown in Figure \ref{fig:2dim}, and the shadow point is just the $(x_{wm},y_{wm})$,and we denote it as $p_{wm}$.
+\begin{figure}[t]
+  \centering
+  \epsfig{figure=./hw2_4_2.eps,scale=0.6}
+  \caption{Two Dimension Post Office Problem}
+  \label{fig:2dim}
+\end{figure}
+\\ Similarily, we consider the derivatives in the neighborhood of $p_{wm}$. While in 2 dimension space, we separately consider $\frac{\partial P}{\partial x}$ and $\frac{\partial P}{\partial Y}$, and because the distance here are \emph{Manhattan Distance},each partial derivative is the same as one-dimension post office problem and is independent with the other.
+\\ For X-Dimension, in the neighborhood of $p_{wm}$, $\frac{\partial P}{\partial x}$'s direction is indicated with horizontal arrow in the Figure \ref{fig:2dim}. Similarily,$\frac{\partial P}{\partial x}$'s direction is indicated with vertical arrow in the Figure \ref{fig:2dim}. \\ Then we start from $p_{wm}$, in the dashed rectangle, no matter what direction we choose, the angle with its directional derivative will be acute, then P function will increase.\\
+Then the $p_{wm}$ is the local minimum. And we can also consider the whole input space to find that $p_{wm}$ is also the global minimum, the proof is omitted here.
+
+\end{document}

@@ -1,0 +1,101 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\setlength{\parindent}{0cm}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{6}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{1}
+\begin{document}
+\maketitle
+\newpage
+
+\section*{Exercise 24.1-6}
+1. First we modify the original graph G = (V,E). 
+
+Add two vertices s' and t' to V and we get a new vertices set V', and for each vertex v $\in$ V. 
+
+Then add (s',v) and (v,t') into edges set E to constitute a new edges set V', and w(s',v) = 1, w(v,t') = 1. 
+
+The new graph is G' = (V',E').
+
+2. For the new graph G',Lets s' be the source vertex, and let G' be initialized by INITIALIZE-SINGLE-SOURCE(G',s'), then we run MODIFIED-BELLMAN-FORD algorithm as presented below.
+\begin{algorithm}[h]
+\caption{MODIFIED-BELLMAN-FORD}
+\label{algo:mbf}
+\begin{algorithmic}[1]
+  \REQUIRE G',w,s' 
+  \ENSURE ~ ~\\ 
+  \STATE {INITIALIZE-SINGLE-SOURCE(G',s')}
+  \FOR {$i = 1$ to $|G'.V|-1$}
+	\FOR {each edge (u,v) $\in$ G'.E}
+	  \STATE {RELAX(u,v,w)}
+	\ENDFOR
+  \ENDFOR
+  \FOR {each edge (u,v) $\in$ G'.E}
+	\IF{v.d $>$ u.d + w(u,v)}
+	  \STATE{circle = v}
+	  \STATE{BREAK}
+	\ENDIF
+  \ENDFOR
+  \STATE{position = circle.$\pi$}
+  \STATE{PRINT circle}
+  \WHILE {position $\neq$ circle}
+	\STATE{PRINT position}
+	\STATE{position = position.$\pi$}
+  \ENDWHILE
+  \LASTCON NONE	
+\end{algorithmic}
+\end{algorithm}
+
+3. Then we prove the algorithm is correct.
+
+In the creation of the new graph, we only add new vertices and non-negative edges, then all the negative circles in original graph are preserved. 
+
+All the edges about s' are out-coming edges and all the edges about t' are incoming edges, then s' and t' won't appear in any negative circle, then we don't create new negative circles. Then the negative circles in graph G are just the same as those in graph G', then finding negative circles in graph G is the same as finding negative circles in graph G'.
+
+What's more, we connect all the vertices in graph G with s' and t', then all the vertices are reachable for s', so are all the negative circles.
+
+Then we start Bellman-Ford algorithm in G' choosing s' as the source vertex. By the property of Bellman-Ford algorithm,for there exist negative circles, then after $|V'|-1$ times iterations, there must be some vertices can be relaxed and these vertices must be in some negative circles. 
+
+And in the last iteration, those vertices in the negative circle will be relaxed sequentially then the chain of predecessor of each vertex forms the negative circle itself.
+
+So by $v.d > u.d + w(u,v)$, we find a vertex can be relaxed, then trace it with its predecessor, we will find a certain negative circle.
+
+\section*{Exercise 24.5-6}
+At first, the only vertex in $V_{\pi}$ is the source s, then the conclusion is trivially.
+Then we assume there exist a $G_{\pi}$ set that for every vertex $v \in V_{\pi}$, there exists a path from $s$ to $v$ in $G_{\pi}$.
+We prove that we randomly do relaxation it won't change the above property.We denote the relaxation as $(u,v)$. 
+
+1.Assume that $u \in V_{\pi} $ and $v \in V_{\pi}$. If the decrease-key success, the $v.\pi$ is updated with $u$, that is we just remove the edge from $(v.\pi,v)$ and add a edge $(u,v)$,because there is a path from s to $u$ from our assumption, then there will also be at least a path from s to new $v$ through $u$, as well as to those nodes can only be accessed from s through $v$. 
+
+Thus the property is hold.
+
+
+2.Assume that $u \in V_{\pi} $ and $v \notin V_{\pi}$. If the decrease-key success, the $v.\pi$ is updated with $u$ from NIL, that is we add a vertex to $G_{\pi}$ and add a edge $(u,v)$,because there is a path from s to $u$ from our assumption, then there will also be path from s to $v$ through $u$. 
+
+Thus the property is hold.
+
+3.Assume that $u \notin V_{\pi} $ and $v \in V_{\pi}$. The decrease-key cannot success, for the $u.d = \infty$ and $v.d \neq \infty$. Then the $G_{\pi}$ won't change. 
+
+Thus the property is hold.
+
+4.Assume that $u \notin V_{\pi} $ and $v \notin V_{\pi}$.  The decrease-key cannot success, for the $u.d = \infty$ and $v.d = \infty$. Then the $G_{\pi}$ won't change. 
+
+Thus the property is hold.
+
+Then we have proved that no matter what type of relaxation we do, it won't change the property that for every vertex $v \in V_{\pi}$, there exists a path from $s$ to $v$ in $G_{\pi}$. Then no matter what sequence of relaxations we take, as long as the initial $G_{\pi}$ holds the property, it won't be broken by relaxation.
+
+And we have shown that the initial $G_{\pi}$ with only source s meets the demands.
+
+Then we have finished the proof.
+
+\end{document}

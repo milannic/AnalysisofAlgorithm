@@ -1,0 +1,36 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{epsfig}
+\setlength{\parindent}{0cm}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{7}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{2}
+\begin{document}
+\maketitle
+\newpage
+\section{Exercise 34.4-6}
+At first we denote the polynomial-time algorithm to decide formula satisfiability as $A(x)$, and we do the following steps to get a possible assignment. 
+Assume for a certain formula F with $n$ variables from $v_{1}$ to $v_{n}$.\\
+0. Set $i = 1,F_{0} = F,array[1\cdots n] = 0$ \\
+1. We set $v_{i}$ to 1,and replace all the $v_{i}$ with 1 in $F_{i-1}$ to get a new formula $F_{i}$.\\
+2. Then we test whether $A(F_{i})$ is satisfiable, if it is, set array[i] = 1 and go to step 6.\\
+3. Otherwise, we set $v_{i}$ to 0, and replace all the $v_{i}$ with 0 in $F_{i-1}$ to get a new formula as $F_{i}$\\
+4. Then we test whether $A(F_{i})$ is satisfiable, if it is, set array[i] = 0 and go to step 6.\\
+5. Otherwise, we return 0, the formula cannot be satisfiable.\\
+6. If $i = n $, return 1 and array, array is just one proper assignment.\\
+7. $i=i+1$ goto step 1. \\
+
+For each iteration in the loop we can finish it in polynomial time(traverse the whole input won't be greater than polynomial time to construct the new formula and the decide algorithm is also polynomial-time)  and the total loop times won't be larger than n, then the total algorithm is polynomial time.
+
+
+\end{document}

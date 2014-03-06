@@ -1,0 +1,86 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{4}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{1}
+\begin{document}
+\maketitle
+\newpage
+
+\section*{Problem 16.2-4}
+Let's denote $s_{i}$ as the $i$th station in the trip and we take array A to record distance between two neighbor station.
+\\Thus $A[i]$ is the distance between $s_{i-1}$ to $s_{i}$, and $s_{0}$ is our start point,and $s_{n}$ is the end point.
+\\And we know that our rate of cosuming water is fixed, and m miles will cost 2 liter water, then $r = \frac{2}{m} liter/mile $ 
+\\ Then we indicate our water stop problem as S, S(A,k,n,w), A is the distance array, k is current station and n is the final station, w is current amount of water. 
+\\ Then our original problem can be S(A,0,n,2), take S as the set in which the element is the water stop station.
+\\And our optimal structure can be described as : \\ 
+\begin{equation}
+S(A,i,n,2) = \left\{
+             \begin{array}{lcl}
+			   {0} &\text{if}& i>=n || \sum_{j=i+1}^{n}A[j]\frac{2}{m}<=2 \\
+			   {min_{\sum_{j=i+1}^{k}A[j]\frac{2}{m}<=2}(S(A,k,n,2))+\{s_{k}\}} &\text{else}& \\
+             \end{array}  
+        \right.
+\end {equation}
+Firstly if we can finish the whole trip with 2 liter water then our answer is zero, otherwise we can prove that if $s[k] \in S(A,i,n,2)_{op}$, then $S(A,i,n,2)_{op}-\{s_{i}\} = S(A,k,n,2)_{op}$. \\
+We assume that $S(A,i,n,2)_{op}-\{s_{i}\} \neq S(A,k,n,2)_{op}$. \\ 
+W.L.O.G, we assume $S(A,i,n,2)_{op}-\{s_{i}\} = S(A,k,n,2)_{op} -\{s_{m}\}+\{s_{l},s_{o}\}$.\\
+Then we can apply this change to $S(A,i,n,2)_{new} = S(A,i,n,2)_{op}-\{s_{m}\}+\{s_{l},s_{o}\}$\\ 
+Because there is no running-out-water in $S(A,k,n,2)_{op}$,and it will also be no such event in $S(A,i,n,2)_{new}$, then this is a valid solution.
+$|S(A,i,n,2)_{new}|<|S(A,i,n,2)_{op}|$, thus $S(A,i,n,2)_{op}$ won't be the optimum, this contradicts with our hypothesis.
+Then we have proved :
+$$S(A,i,n,2)_{op}-\{s_{i}\} = S(A,k,n,2)_{op}$$
+{\bfseries 
+  Then we say that our greedy algorithm is that we find the farthest station to refill water as long as there won't be no running-out-water.
+}
+\\ That is
+\begin{equation}
+S(A,i,n,2) = \left\{
+             \begin{array}{lcl}
+			   {0} &\text{if} i>=n || \sum_{j=i+1}^{n}A[j]\frac{2}{m}<=2 & \\
+			   {(S(A,k,n,2))+\{s_{k}\}} &argmax_{k} \sum_{j=i+1}^{k}A[j]\frac{2}{m}<=2 &\text{else}\\
+             \end{array}  
+        \right.
+\end {equation}
+\\ Then we prove that this it is safe to choose this sub-problem by greedy algorithm.\\
+Assume that in our greedy algorithm, for $S(A,i,n,2)_{greedy}$, we choose the farthest station $s_{k1}$ as the next refill station, and our $S(A,i,n,2)_{op} = S(A,k2,n,2)+\{s_{k}\}$.\\
+Because $s_{k1}$ is the farthest station, we have $k2<k1$, we can say \\ $$|S(A,k2,n,2)_{op}| \geq |S(A,k1,n,2)_{op}|$$
+The reason is so obvious, running more distance must be more consuming that running less distance.
+$$|S(A,i,n,2)_{op}| \geq |S(A,i,n,2)_{greedy}|$$
+\\We have proved that $s_{k1}$ must be in some optimum solution, then our greedy algorithm is safe.
+\\The pseudo-code is below the running time is $\theta(n)$:
+\begin{algorithm}[h]
+  \caption{refill-water}
+  \label{algo:water}
+  \begin{algorithmic}[1]
+	\REQUIRE S,A,n,w,r
+	\ENSURE ~ ~\\ 
+	\STATE {let $S_{op} = \emptyset$}
+	\STATE {$count = 0$}
+	\STATE {$temp = 0$}
+	\FOR {i = 1 to n}
+	  \IF {$A[i]\leq w$}
+		\STATE {RETURN $S_{op} = \emptyset,count = 0$}
+	  \ENDIF
+	  \IF {$(temp+A[i]*r) \leq w$}
+		\STATE {$count += 1$}
+		\STATE {$temp = A[i]$}
+		\STATE {$S_{op} = S_{op}+\{s[i]\}$}
+	  \ELSE 
+		\STATE {$temp += A[i]$}
+	  \ENDIF
+	\ENDFOR
+	\LASTCON $S_{op},count$
+  \end{algorithmic}
+\end{algorithm} 
+\end{document}

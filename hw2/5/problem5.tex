@@ -1,0 +1,68 @@
+\documentclass[oneside]{homework} %%Change `twoside' to `oneside' if you are printing only on the one side of each sheet.
+\usepackage{setspace} 
+\usepackage{algorithm} 
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{epsfig}
+\renewcommand{\algorithmicrequire}{\textbf{Require:}}
+\renewcommand{\algorithmicensure}{\textbf{Iteration:}}
+\renewcommand{\algorithmiclastcon}{\textbf{Output:}}
+\studname{Cheng Liu}
+\collaborator{Introduction to algorithms\\}
+\coursename{Analysis of algorithms I}
+\hwNo{2}
+\uni{cl3173}
+\cuni{3rd edition}
+\prNo{5}
+\begin{document}
+\maketitle
+\newpage
+\section {Exercise 5.2-4 Hat-Check Problem}
+The problem is similar to raffle problem, everybody's own hat can be regarded as the only winning lottery in the box,and no matter who picks first or picks behind, the probability of each person get his own hat is $\frac{1}{n}$, n is the total number of the people. \\
+
+
+\noindent Then we set the indication random varible to be $X_{i} = \left\{The~i~th~person~get~his~own~hat\right\}$.\\
+For every $i$: 
+\begin{eqnarray}
+  \begin{split}
+	E(X_{i}) &= 1*P(X_{i}=1) + 0*P(X_{i}=0)
+	 &= P(X_{i}=1)
+	 &= \frac{1}{n}
+  \end{split}
+\end{eqnarray}
+Then we have Equation \ref{equ:sume1}
+\begin{eqnarray}
+  \begin{split}
+  E(X) &= \sum_{i=1}^{n}E(X_{i}) \\
+  &= n*\frac{1}{n} \\
+  &= 1
+  \end{split}
+  \label{equ:sume1}
+\end{eqnarray}
+\section {Exercise 5.2-5 Expectation of Inversion}
+
+For this time, we set the indication random varible to be $X_{ij} = \left\{A[i]>A[j]\right\}$.\\
+Then the total number of inversion can be written as :
+\begin{equation}
+  X = \sum_{i=1}^{n-1}\sum_{j=i+1}^{n}X_{ij}
+  \label{equ:xinversion}
+\end{equation}
+
+Intuitively we know that in a disdinct array, for any two position $i$ and $j$, we have
+\begin{equation}
+  P(A[i]<A[j])=P(A[i]>A[j])=\frac{1}{2}
+\end{equation}
+Therefore: \\
+\begin{eqnarray}
+  \begin{split}
+E(X) &= E(\sum_{i=1}^{n-1}\sum_{j=i+1}^{n}X_{ij}) \\
+ &= \sum_{i=1}^{n-1}\sum_{j=i+1}^{n}E(X_{ij}) \\
+ &= \frac{(n-1)n}{2}E(X_{ij}) \\
+ &= \frac{(n-1)n}{2}*\frac{1}{2} \\
+ &= \frac{(n-1)n}{4} \\
+  \end{split}
+  \label{equ:sume2}
+\end{eqnarray}
+
+
+\end{document}
